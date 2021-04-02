@@ -1,18 +1,17 @@
 <template>
   <div>
-    <TopBar />
+    <TopBar/>
     <div class="container-fluid">
       <div class="row row-content">
         <div class="col-md-3 col-lg-2">
-          <LeftMenuBar />
+          <LeftMenuBar/>
         </div>
         <div class="col-md-6 col-lg-8">
           <div class="row">
-          <ChartsPage/>
+          <PopularListPage/>
           </div>
         </div>
         <div class="col-md-3 col-lg-2 content-offset">
-        
         </div>
       </div>
     </div>
@@ -22,14 +21,14 @@
 <script>
 import TopBar from "@/components/TopBar.vue";
 import LeftMenuBar from "@/components/LeftMenuBar.vue";
-import ChartsPage from "@/components/ChartsPage.vue";
+import PopularListPage from "@/components/PopularListPage.vue";
 
 export default {
-  name: "Home",
+  name: "PopularList",
   components: {
     TopBar,
     LeftMenuBar,
-    ChartsPage
+    PopularListPage,
   },
 };
 </script>

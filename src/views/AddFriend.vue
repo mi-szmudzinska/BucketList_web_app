@@ -8,11 +8,10 @@
         </div>
         <div class="col-md-6 col-lg-8">
           <div class="row">
-          <ChartsPage/>
+          <AddFriendPage/>
           </div>
         </div>
         <div class="col-md-3 col-lg-2 content-offset">
-        
         </div>
       </div>
     </div>
@@ -22,14 +21,14 @@
 <script>
 import TopBar from "@/components/TopBar.vue";
 import LeftMenuBar from "@/components/LeftMenuBar.vue";
-import ChartsPage from "@/components/ChartsPage.vue";
+import AddFriendPage from "@/components/AddFriendPage.vue";
 
 export default {
-  name: "Home",
+  name: "AddFriends",
   components: {
     TopBar,
     LeftMenuBar,
-    ChartsPage
+    AddFriendPage,
   },
 };
 </script>

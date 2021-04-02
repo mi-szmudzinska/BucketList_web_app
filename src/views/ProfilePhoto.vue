@@ -7,12 +7,9 @@
           <LeftMenuBar />
         </div>
         <div class="col-md-6 col-lg-8">
-          <div class="row">
-          <ChartsPage/>
-          </div>
+          <ProfilePhotoPage/>
         </div>
         <div class="col-md-3 col-lg-2 content-offset">
-        
         </div>
       </div>
     </div>
@@ -22,14 +19,14 @@
 <script>
 import TopBar from "@/components/TopBar.vue";
 import LeftMenuBar from "@/components/LeftMenuBar.vue";
-import ChartsPage from "@/components/ChartsPage.vue";
+import ProfilePhotoPage from "@/components/ProfilePhotoPage.vue";
 
 export default {
-  name: "Home",
+  name: "ProfilePhoto",
   components: {
     TopBar,
     LeftMenuBar,
-    ChartsPage
+    ProfilePhotoPage
   },
 };
 </script>
