@@ -227,7 +227,7 @@ export default {
               lastName: this.form.lastName,
               age: this.form.age,
               gender: this.form.gender,
-              
+              profilepic: this.form.profilepic,
             });
         })
         .then(() => {

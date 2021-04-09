@@ -1,7 +1,7 @@
 <template>
   <div class="left_menu_bar">
     <form novalidate class="md-layout" @submit.prevent="validateUser">
-      <div>
+      <div class="top_align">
         <avatar username="Jane Doe" :size="150"></avatar>
       </div>
 
@@ -52,9 +52,6 @@
             <md-list slot="md-expand">
               <md-list-item class="md-inset" to="settings"
                 >• Informacje</md-list-item
-              >
-              <md-list-item class="md-inset" to="profilephoto"
-                >• Zdjęcie profilowe</md-list-item
               >
             </md-list>
           </md-list-item>
@@ -150,5 +147,8 @@ footer {
   display: flex;
   justify-content: center;
   bottom: 0;
+}
+.top_align{
+  margin-top: 0.5em;
 }
 </style>

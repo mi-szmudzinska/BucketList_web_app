@@ -1,0 +1,20 @@
+.modal-content{
+    width: 600px;
+}
+span {
+    display: flex;
+}
+h3,
+h5,
+h6,
+.dropdownmen {
+    display: flex;
+    justify-content: center;
+}
+#category {
+    margin-left: 83%;
+    color: rgb(255, 188, 157);
+}
+#addbutton {
+    margin-top: 2.5em;
+}

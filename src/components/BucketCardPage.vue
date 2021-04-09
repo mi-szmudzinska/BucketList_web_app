@@ -1,6 +1,4 @@
 <template>
-  <div class="grid-container">
-    <div class="row row-content">
       <div class="col-md-6 col-lg-6">
         <md-card>
           <md-card-media-cover md-text-scrim>
@@ -30,8 +28,6 @@
           </md-card-media-cover>
         </md-card>
       </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -51,8 +47,8 @@ export default {
       type: String,
     },
     showModal: {
-      type: Function
-    }
+      type: Function,
+    },
   },
 };
 </script>

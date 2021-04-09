@@ -45,11 +45,6 @@ const routes = [
     name: 'AddFriend',
     component: () => import('../views/AddFriend.vue')
   },
-  {
-    path: '/profilephoto',
-    name: 'ProfilePhoto',
-    component: () => import('../views/ProfilePhoto.vue')
-  },
 ]
 
 const router = new VueRouter({

@@ -13,29 +13,75 @@
         </md-autocomplete>
 
         <div class="sort-btn">
-          <button > Nazwa </button>
-          <button > STATUS </button>
+          <button>NAZWA</button>
+          <button>STATUS</button>
+
+          <md-menu md-size="medium" md-align-trigger>
+            <button md-menu-trigger>KATEGORIA</button>
+
+            <md-menu-content>
+              <md-menu-item>PODRÓŻE</md-menu-item>
+              <md-menu-item>JEDZENIE I KUCHNIA</md-menu-item>
+              <md-menu-item>KARIERA</md-menu-item>
+              <md-menu-item>MIŁOŚĆ I RODZINA</md-menu-item>
+              <md-menu-item>SPORT</md-menu-item>
+              <md-menu-item>INNE</md-menu-item>
+            </md-menu-content>
+          </md-menu>
         </div>
       </div>
 
-      <BucketCardPage v-for="(element, index) in data"
-      :key="{ index }"
-      :title="element.title"
-      />
+      <div>
+        <BucketCardPage
+          v-for="(element, index) in data"
+          :showModal="showModal"
+          :key="index"
+          :name="element.name"
+          :desc="element.desc"
+          :longdesc="element.longdesc"
+          :category="element.category"
+        />
+      </div>
 
-      
+      <div>
+        <b-modal id="modal" hide-footer @hidden="closeModal">
+          <h3 v-if="activeBucket">{{ activeBucket.name }}</h3>
+          <span id="category" v-if="activeBucket">
+            <md-icon>fiber_manual_record</md-icon>
+            {{ activeBucket.category }}
+          </span>
+          <h5 v-if="activeBucket">{{ activeBucket.desc }}</h5>
+          <img src="../assets/palne.jpg" />
+          <h6 v-if="activeBucket">{{ activeBucket.longdesc }}</h6>
+          <div class="dropdownmen">
+            <span> Chcesz zmenić status? </span>
+            <br />
+            <select v-model="selected">
+              <option disabled value="">Wybierz nowy:</option>
+              <option>a</option>
+              <option>b</option>
+              <option>c</option>
+            </select>
+          </div>
+
+          <button id="addbutton">Zapisz</button>
+        </b-modal>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import BucketCardPage from "@/components/BucketCardPage.vue";
+import firebase from "firebase";
 import "./../styles/popularListPage.css";
+import "./../styles/modal.css";
 
 export default {
   components: { BucketCardPage },
-  name: "PopularListPage",
+  name: "YourListPage",
   data: () => ({
+    searchinbase: null,
     ideas: [
       "Algeria",
       "Argentina",
@@ -46,13 +92,33 @@ export default {
       "United Kingdom",
       "United States",
     ],
-    data: [
-      {
-        title: "elo",
-      },
-    ],
-
+    data: [],
+    activeBucket: null,
+    selected: "",
   }),
+  methods: {
+    showModal(name) {
+      this.activeBucket = this.data.find((bucket) => bucket.name === name);
+      this.$bvModal.show("modal");
+    },
+    closeModal() {
+      this.activeBucket = null;
+    },
+  },
+  created() {
+    firebase
+      .firestore()
+      .collection("app")
+      .doc("defaultBacketListElements")
+      .get()
+      .then((snapshot) => {
+        const { elements } = snapshot.data();
+        this.data = elements;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
 };
 </script>
 
@@ -66,7 +132,6 @@ export default {
 .category {
   color: rgb(255, 188, 157);
 }
-
 .md-card {
   width: 100%;
   margin: 4px;
