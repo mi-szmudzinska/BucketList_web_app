@@ -77,8 +77,6 @@
               >
                 </md-field>
 
-   
-
           <md-field :class="getValidationClass('email')">
             <label for="email">Email</label>
             <md-input
@@ -122,13 +120,10 @@
             >Zarejestruj się</md-button
           >
           <small>Masz już konto?</small>
-          <md-button class="md-raised md-primary" to="/">Zaloguj się</md-button>
+          <md-button class="md-raised md-primary" @click="$router.push('/')">Zaloguj się</md-button>
         </md-card-actions>
       </md-card>
 
-      <md-snackbar :md-active.sync="userSaved"
-        >Użytkownik {{ lastUser }} został poprawnie zajerejstrowany</md-snackbar
-      >
     </form>
   </div>
 </template>
@@ -155,10 +150,10 @@ export default {
       gender: null,
       email: null,
       password: null,
+      photoId: "",
     },
     userSaved: false,
     sending: false,
-    lastUser: null
   }),
   validations: {
     form: {
@@ -222,12 +217,12 @@ export default {
             .doc(user.user.uid)
             .set({
               email: this.form.email, 
-              password: this.form.password,
               firstName:this.form.firstName,
               lastName: this.form.lastName,
               age: this.form.age,
               gender: this.form.gender,
-              profilepic: this.form.profilepic,
+              photoId: this.form.photoId,
+              
             });
         })
         .then(() => {

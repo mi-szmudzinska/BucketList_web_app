@@ -45,6 +45,11 @@ const routes = [
     name: 'AddFriend',
     component: () => import('../views/AddFriend.vue')
   },
+  {
+    path: '/addtomylist',
+    name: 'AddToList',
+    component: () => import('../views/AddToList.vue')
+  },
 ]
 
 const router = new VueRouter({

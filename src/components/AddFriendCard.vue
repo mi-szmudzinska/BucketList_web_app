@@ -1,85 +1,130 @@
 <template>
-    <md-card>
-     <div class="row row-content">
-          <div class="col-md-3 col-lg-3">        
-          <md-avatar>
-          <img
-            src="https://vuematerial.io/assets/examples/avatar.png"
-            alt="Avatar"
-          />
-        </md-avatar>
-          </div>
-          <div class="col-md-9 col-lg-9">
-      <md-card-media>
-
-        <span class="md-title">Alicja Nowak</span>
-        <label>{{gender}}, {{age}} lat</label>
-
-        <label>Zadania ukończone</label>
-        <k-progress :percent="a" status="success"></k-progress>
-        <label>Zadania w trakcie realizacji</label>
-        <k-progress :percent="b" status="warning"></k-progress>
-        <label>Zadania w planach</label>
-        <k-progress :percent="c" status="error"></k-progress>
-        <label>Zainteresowania: {{interests}}</label>
-        <md-button>Zaobserwuj by zobaczyć więcej</md-button>
-      </md-card-media>
-    </div>
-    </div>
-    </md-card>
+  <md-card v-if="!isFriend">
+    <b-avatar variant="light" :size="100">
+      <img v-if="url" :src="url" />
+    </b-avatar>
+    <md-card-media>
+      <span class="md-title">{{ firstName }} {{ lastName }}</span>
+      <label>{{ gender }}</label>
+      <md-button @click="addFriend()">Zaobserwuj</md-button>
+    </md-card-media>
+  </md-card>
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
-  name: "AddCard",
+  name: "AddFriendCard",
+  data: () => ({
+    url: null,
+  }),
   props: {
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
     gender: {
-      type: String
+      type: String,
     },
-    age: {
-      type: Number
+    photoId: {
+      type: String,
     },
-    interests: {
-      type: String
+    id: {
+      type: String,
     },
-    a: {
-      type: Number
+    isFriend: {
+      type: Boolean,
     },
-    b: {
-      type: Number
+    refreshFun: {
+      type: Function,
     },
-    c: {
-      type: Number
-    }
-  }
+  },
+  created() {
+    this.photoUrl();
+  },
+  watch: {
+    photoId() {
+      this.photoUrl();
+    },
+  },
+  methods: {
+    photoUrl() {
+      if (!this.photoId) {
+        return;
+      }
+      const storage = firebase.storage();
+      const img = storage.ref(this.photoId);
+      img.getDownloadURL().then((url) => {
+        this.url = url;
+      });
+    },
+    async addFriend() {
+      const { currentUser } = firebase.auth();
+      if (!currentUser) {
+        return;
+      }
+      const userDoc = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+
+      userDoc.get().then((snapshot) => {
+        const { friends, ...rest } = snapshot.data();
+
+        const newFriendsList = friends || [];
+        newFriendsList.push(this.id);
+        userDoc.set({
+          ...rest,
+          friends: newFriendsList,
+        });
+
+        this.refreshFun();
+      });
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.col-md-3{
-    display: flex;
-    padding-right: 0px;
+.col-md-3 {
+  display: flex;
+  padding-right: 0px;
 }
 .md-card-media {
-    display: grid;;
+  display: inline-grid;
 }
-.md-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+.b-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0.5em 1em 0.5em 0.5em;
+  align-content: center;
+  justify-content: center;
 }
 .md-title {
   color: #000;
+}
+.md-button {
+  background-color: rgb(205, 239, 255);
+  white-space: normal;
+  color: rgb(0, 0, 0);
+  border-radius: 0.5em;
+  margin-left: 6px;
+  width: 150px;
 }
 .friends-page {
   min-width: 100%;
 }
 .md-card {
-  width: 500px;
-  height: 20%px;
+  width: 400px;
+  height: 100%;
   margin: 4px;
-  display: inline-block;
-  vertical-align: top;
+  align-items: center;
+  display: flex;
+  margin-left: 1.5em;
 }
 .k-progress {
   padding: 0;

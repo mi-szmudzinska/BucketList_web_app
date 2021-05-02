@@ -22,7 +22,7 @@ export default {
 }
 .md-title {
   font-size: 1.6em;
-  font-family: "Oleo Script";
+  font-family: "Shine Himawari";
   font-weight: bold;
   font-size: 32px;
 }

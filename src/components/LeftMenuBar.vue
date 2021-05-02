@@ -2,7 +2,9 @@
   <div class="left_menu_bar">
     <form novalidate class="md-layout" @submit.prevent="validateUser">
       <div class="top_align">
-        <avatar username="Jane Doe" :size="150"></avatar>
+        <b-avatar variant="light" :size="150">
+          <img v-if="url" :src="url" />
+        </b-avatar>
       </div>
 
       <div class="list">
@@ -12,11 +14,11 @@
             <span class="md-list-item-text">BUCKETLIST</span>
 
             <md-list slot="md-expand">
-              <md-list-item class="md-inset" to="yourlist"
-                >• Twoja lista</md-list-item
+              <md-list-item class="md-inset" @click="$router.push('yourlist')"
+                >Twoja lista</md-list-item
               >
-              <md-list-item class="md-inset" to="Home"
-                >• Statystki</md-list-item
+              <md-list-item class="md-inset" @click="$router.push('home')"
+                >Statystki</md-list-item
               >
             </md-list>
           </md-list-item>
@@ -26,8 +28,10 @@
             <span class="md-list-item-text">INSPIRACJE</span>
 
             <md-list slot="md-expand">
-              <md-list-item class="md-inset" to="popularlist"
-                >• Popularne</md-list-item
+              <md-list-item
+                class="md-inset"
+                @click="$router.push('popularlist')"
+                >Popularne</md-list-item
               >
             </md-list>
           </md-list-item>
@@ -37,11 +41,11 @@
             <span class="md-list-item-text">ZNAJOMI</span>
 
             <md-list slot="md-expand">
-              <md-list-item class="md-inset" to="friends"
-                >• Twoi znajomi</md-list-item
+              <md-list-item class="md-inset" @click="$router.push('friends')"
+                >Twoi znajomi</md-list-item
               >
-              <md-list-item class="md-inset" to="addfriend"
-                >• Dodaj znajomego</md-list-item
+              <md-list-item class="md-inset" @click="$router.push('addfriend')"
+                >Dodaj znajomego</md-list-item
               >
             </md-list>
           </md-list-item>
@@ -50,8 +54,8 @@
             <span class="md-list-item-text">USTAWIENIA</span>
 
             <md-list slot="md-expand">
-              <md-list-item class="md-inset" to="settings"
-                >• Informacje</md-list-item
+              <md-list-item class="md-inset" @click="$router.push('settings')"
+                >Informacje</md-list-item
               >
             </md-list>
           </md-list-item>
@@ -59,6 +63,7 @@
       </div>
       <footer>
         <md-button
+          v-b-popover.hover.top="'Wyloguj się'"
           type="submit"
           class="md-raised md-primary"
         >
@@ -71,18 +76,14 @@
 
 <script>
 import firebase from "firebase";
-import { validationMixin } from "vuelidate";
-import Avatar from 'vue-avatar'
+import {refreshAvatarSubject$} from  './../main.js';
 
 export default {
   name: "LeftMenuBar",
-  mixins: [validationMixin],
   data: () => ({
+    url: null,
     sending: false,
   }),
-  components: {
-    Avatar
-  },
   methods: {
     signOut() {
       this.sending = true;
@@ -98,6 +99,38 @@ export default {
     validateUser() {
       this.signOut();
     },
+    getAvatarPhoto() {
+      const { currentUser } = firebase.auth();
+      const users = firebase.firestore().collection("users");
+
+      if (!currentUser) {
+        return;
+      } else {
+        this.uid = currentUser.uid;
+      }
+
+      users
+        .doc(currentUser.uid)
+        .get()
+        .then((snapshot) => {
+          const { photoId } = snapshot.data();
+          this.photoId = photoId;
+          const storage = firebase.storage();
+          const img = storage.ref(this.photoId);
+          img.getDownloadURL().then((url) => {
+            this.url = url;
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
+  created() {
+    this.getAvatarPhoto();
+    refreshAvatarSubject$.subscribe(() => {
+      this.getAvatarPhoto();
+    })
   },
 };
 </script>
@@ -137,10 +170,11 @@ small {
   justify-content: center;
 }
 .md-button {
-  background-color: rgb(228, 247, 255);
   opacity: 0.9;
-  color: rgb(0, 0, 0);
   border-radius: 0.5em;
+}
+.md-button.md-raised {
+  box-shadow: none;
 }
 footer {
   position: absolute;
@@ -148,7 +182,7 @@ footer {
   justify-content: center;
   bottom: 0;
 }
-.top_align{
+.top_align {
   margin-top: 0.5em;
 }
 </style>

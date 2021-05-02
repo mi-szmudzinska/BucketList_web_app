@@ -37,7 +37,7 @@
                   <md-input
                     name="name"
                     id="name"
-                    autocomplete="given-name"
+                    autocomplete="name"
                     v-model="form.name"
                     :disabled="sending"
                   ></md-input>
@@ -53,7 +53,7 @@
                   <md-input
                     name="subname"
                     id="subname"
-                    autocomplete="family-name"
+                    autocomplete="subname"
                     v-model="form.subname"
                     :disabled="sending"
                   ></md-input>
@@ -101,44 +101,36 @@
               >Zapisz zmiany</md-button
             >
           </div>
+
           <div class="col-md-4 col-lg-4">
-          <div class="editphoto">
-             <avatar :src="user.avatar" :size="200"></avatar>
+            <div class="addphoto">
+            <md-subheader>Zdjęcie profilowe</md-subheader>
+              <div>
+                <input
+                  type="file"
+                  name="file"
+                  ref="file"
+                  accept="image/*"
+                  placeholder="Wybierz zdjęcie"
+                  @change="handleFile()"
+                />
+              </div>
+              <div class="photoav">
+                <img v-if="fileContent" :src="fileContent" alt="Selected photo" >
+              </div>
+            </div>
               <md-button
                 type="submit"
                 class="md-primary"
-                id="pick-avatar"
-                :disabled="sending"                
-                >Zmień zdjęcie profilowe
-              </md-button>
-          </div>
-
-          </div>
+                :disabled="sending"
+                @click="addPhoto()"
+                >Zapisz zmiany</md-button
+              >
+            </div>
+          
 
           <div class="col-md-4 col-lg-4">
             <md-list>
-              <md-subheader>Hasło</md-subheader>
-
-              <md-list-item>
-                <md-field :class="getValidationClass('password')">
-                  <label>Obecne hasło</label>
-                  <md-input
-                    type="password"
-                    id="password"
-                    name="password"
-                    autocomplete="agpassworde"
-                    v-model="form.password"
-                    :disabled="sending"
-                  ></md-input>
-                  <span class="md-error" v-if="!$v.form.password.required"
-                    >Hasło wymagane</span
-                  >
-                  <span class="md-error" v-else-if="!$v.form.password.minLength"
-                    >Minimum 6 znaków</span
-                  >
-                </md-field>
-              </md-list-item>
-
               <md-subheader>Nowe hasło</md-subheader>
               <md-list-item>
                 <md-field :class="getValidationClass('newpassword')">
@@ -161,30 +153,8 @@
                   >
                 </md-field>
               </md-list-item>
-
-              <md-list-item>
-                <md-field :class="getValidationClass('repeatPassword')">
-                  <label>Powtórz nowe hasło</label>
-                  <md-input
-                    type="password"
-                    id="repeatPassword"
-                    name="repeatPassword"
-                    autocomplete="repeatPassword"
-                    v-model="form.repeatPassword"
-                    :disabled="sending"
-                  ></md-input>
-                  <span class="md-error" v-if="!$v.form.password.sameAs"
-                    >Nowe hasła nie są identyczne</span
-                  >
-                  <span class="md-error" v-else-if="!$v.form.password"
-                    >Minimum 6 znaków</span
-                  >
-                  <span class="md-error" v-else-if="!$v.form.password.minLength"
-                    >Minimum 6 znaków</span
-                  >
-                </md-field>
-              </md-list-item>
             </md-list>
+
             <md-button type="submit" class="md-primary" :disabled="sending"
               >Zapisz zmiany</md-button
             >
@@ -193,47 +163,37 @@
         <md-progress-bar md-mode="indeterminate" v-if="sending" />
       </div>
     </form>
-    <md-snackbar :md-active.sync="userSaved"
-      >Zmiany ktore wprowadziłeś zostały zapisane poprawnie</md-snackbar
-    >
   </div>
 </template>
 
 <script>
-import Avatar from 'vue-avatar'
 import { validationMixin } from "vuelidate";
+import firebase from "firebase";
 import {
   required,
   email,
   minLength,
   maxLength,
-  sameAs,
 } from "vuelidate/lib/validators";
 import "./../styles/popularListPage.css";
+import { v4 } from 'uuid';
+import {refreshAvatarSubject$} from  './../main.js';
 
 export default {
   name: "SettingsPage",
   mixins: [validationMixin],
-    components: {
-      Avatar,
-  },
   data: () => ({
-    user: {
-        avatar: "https://i.pinimg.com/564x/c6/02/75/c602759505907c9351372b8c2d97cc7c.jpg"
-      },
+    avatarletters: [],
+    fileContent: null,
     form: {
-      email: "ala@wp.pl",
-      name: "xex",
-      subname: "xxe",
-      password: "%hasło%",
-      age: "12",
+      email: "",
+      name: "",
+      subname: "",
+      age: "",
       gender: "",
-      newpassword: "",
-      repeatPassword: "",
     },
     userSaved: false,
     sending: false,
-    lastUser: null,
   }),
   validations: {
     form: {
@@ -256,15 +216,7 @@ export default {
       gender: {
         required,
       },
-      password: {
-        required,
-        minLength: minLength(6),
-      },
       newpassword: {
-        minLength: minLength(6),
-      },
-      repeatPassword: {
-        sameAsPasseord: sameAs("newpassword"),
         minLength: minLength(6),
       },
     },
@@ -282,13 +234,11 @@ export default {
     clearForm() {
       this.$v.$reset();
       this.form.newpassword = null;
-      this.form.repeatPassword = null;
     },
     saveUser() {
       this.sending = true;
 
       window.setTimeout(() => {
-        this.lastUser = `${this.form.name} ${this.form.subname}`;
         this.userSaved = true;
         this.sending = false;
         this.clearForm();
@@ -301,6 +251,78 @@ export default {
         this.saveUser();
       }
     },
+    handleFile() {
+      console.log(this.$refs.file.files[0]);
+      this.file = this.$refs.file.files[0];
+
+      const reader = new FileReader();
+      reader.readAsDataURL(this.file)
+      reader.onload = () => {
+        this.fileContent = reader.result;
+      }
+    },
+
+    async addPhoto() {
+      const { currentUser } = firebase.auth();
+
+      if (!currentUser) {
+        return;
+      }
+
+      const userDoc = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+
+      try {
+        const hash = v4();
+        const storageRef = firebase.storage().ref();
+        const photoRef = storageRef.child(hash);
+        await photoRef.put(this.file);
+
+        const snapshot = await userDoc.get();
+        const { photoId , ...rest } = snapshot.data();
+        
+        if(photoId){
+         await storageRef.child(photoId).delete();
+        }
+
+        userDoc.set({
+          ...rest,
+          photoId: hash,
+        });
+        
+        refreshAvatarSubject$.next();
+      } catch (error) {
+        console.log(error);
+      }
+      
+    },
+  },
+  created() {
+    const { currentUser } = firebase.auth();
+    const users = firebase.firestore().collection("users");
+
+    if (!currentUser) {
+      return;
+    } else {
+      this.uid = currentUser.uid;
+    }
+
+    users
+      .doc(currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        const { age, email, firstName, gender, lastName } = snapshot.data();
+        this.form.age = age;
+        this.form.email = email;
+        this.form.name = firstName;
+        this.form.gender = gender;
+        this.form.subname = lastName;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
 };
 </script>
@@ -308,6 +330,13 @@ export default {
 <style lang="scss" scoped>
 .setting_page {
   height: 100%;
+}
+.photoav{
+  width: 200px;
+  overflow: hidden;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  
 }
 .md-layout {
   height: 100%;

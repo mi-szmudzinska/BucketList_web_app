@@ -1,11 +1,11 @@
 <template>
   <div class="charts_page">
     <div class="container-fluid">
-      <span class="md-list-item-text">TWOJE CELE</span>
+      <h2>TWOJE CELE</h2>
       <md-content>
         <form>Wykres</form>
         <div class="rightstats">
-          <h4>Gratulacje %IMIE%</h4>
+          <h4>Gratulacje {{ this.firstName }}!</h4>
           <span class="sm-list-item-text"
             >Ukończyłaś %% swoich celów co daje XX%</span
           >
@@ -20,13 +20,13 @@
     </div>
     <hr />
     <div class="container-fluid">
-      <span class="md-list-item-text"
-        >Zobacz jak wypadasz na tle swoich znajomych</span
+      <h4
+        >Zobacz jak wypadasz na tle swoich znajomych</h4
       >
       <md-content class="downblock">
         <form class="chartfriend">Wykres</form>
         <div class="downstats">
-          <h2>TY I %FRINEND%</h2>
+          <h3>TY I %FRINEND%</h3>
           <hr class="friendHR" />
           <span class="item-text"
             >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error
@@ -41,8 +41,32 @@
 </template>
 
 <script>
+import firebase from "firebase";
+
 export default {
   name: "ChartsPage",
+
+  created() {
+    const { currentUser } = firebase.auth();
+    const users = firebase.firestore().collection("users");
+
+    if (!currentUser) {
+      return;
+    } else {
+      this.uid = currentUser.uid;
+    }
+
+    users
+      .doc(currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        const { firstName } = snapshot.data();
+        this.firstName = firstName;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
 };
 </script>
 
@@ -86,7 +110,7 @@ hr {
   border-bottom: 3px solid #893774;
 }
 .friendHR {
-  border-bottom: 5px solid #004AAD;
+  border-bottom: 5px solid #004aad;
   width: 80%;
 }
 .downstats {
@@ -94,10 +118,26 @@ hr {
   text-align: center;
   margin: 10% 4% 0 4%;
 }
-h2 {
-  color: #ff3d5a;
+h2{
+  padding-top: 0.2em;
+  display: flex;
+  justify-content: center;
+  font-family: "Tagger";
+  font-size: 45px;
+}
+h3{
+  display: flex;
+  justify-content: center;
+  font-family: "LoveSummer";
+  font-size: 35px;
+}
+h4{
+  display: flex;
+  justify-content: center;
+  font-family: "Tagger";
+  font-size: 35px;
 }
 .item-text {
-  color: #03A2DC;
+  color: #03a2dc;
 }
 </style>

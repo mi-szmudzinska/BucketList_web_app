@@ -63,7 +63,6 @@ export default {
     },
     userSaved: false,
     sending: false,
-    lastUser: null,
   }),
   validations: {
     form: {
@@ -77,6 +76,21 @@ export default {
     },
   },
   methods: {
+    makeToast(variant = null) {
+      if (variant === "info") {
+        this.$bvToast.toast("Udało Ci się zalogować.", {
+          title: `Sukces!`,
+          variant: variant,
+          solid: true,
+        });
+      } else {
+        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz!", {
+          title: `Błąd!`,
+          variant: variant,
+          solid: true,
+        });
+      }
+    },
     getValidationClass(fieldName) {
       const field = this.$v.form[fieldName];
 
@@ -98,9 +112,11 @@ export default {
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(() => {
+          this.makeToast("info");
           this.$router.push("/home");
         })
         .catch(error => {
+          this.makeToast("danger");
           console.log(error)
         })
         .finally(()=> {

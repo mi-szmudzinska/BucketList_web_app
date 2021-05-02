@@ -1,3 +1,25 @@
 .md-menu-content-bottom-start{
     background-color: white;
 }
+.md-card-media-cover .md-card-area{
+    background-color: #00000056;   
+}
+.row {
+    margin-right: 0px;
+}
+.container-fluid {
+    padding-right: 0px;
+}
+.pagination {
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+.page-item.active .page-link{
+    background-color: rgb(218, 179, 255);
+    border-color: rgb(218, 179, 255);
+}
+.md-menu-content-bottom-start {
+    width: 100%!important;
+    max-width: 395px!important;
+}
+

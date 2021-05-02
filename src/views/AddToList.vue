@@ -7,9 +7,7 @@
           <LeftMenuBar />
         </div>
         <div class="col-md-6 col-lg-8">
-          <div class="row">
-          <YourListPage/>
-          </div>
+          <AddToMyList/>
         </div>
         <div class="col-md-3 col-lg-2 content-offset">
         </div>
@@ -21,14 +19,14 @@
 <script>
 import TopBar from "@/components/TopBar.vue";
 import LeftMenuBar from "@/components/LeftMenuBar.vue";
-import YourListPage from "@/components/YourListPage.vue";
+import AddToMyList from "@/components/AddToMyList.vue";
 
 export default {
-  name: "MyList",
+  name: "AddToList",
   components: {
     TopBar,
     LeftMenuBar,
-    YourListPage,
+    AddToMyList
   },
 };
 </script>
