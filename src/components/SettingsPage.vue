@@ -1,6 +1,6 @@
 <template>
   <div class="setting_page">
-    <form novalidate class="md-layout" @submit.prevent="validateUser">
+    <form novalidate class="md-layout">
       <div class="viewport">
         <md-toolbar>
           <span class="md-title">USTAWIENIA PROFILU</span>
@@ -97,14 +97,14 @@
                 </md-field>
               </md-list-item>
             </md-list>
-            <md-button type="submit" class="md-primary" :disabled="sending"
+            <md-button type="submit" class="md-primary" :disabled="sending" @click.prevent="updateData()"
               >Zapisz zmiany</md-button
             >
           </div>
 
           <div class="col-md-4 col-lg-4">
             <div class="addphoto">
-            <md-subheader>Zdjęcie profilowe</md-subheader>
+              <md-subheader>Zdjęcie profilowe</md-subheader>
               <div>
                 <input
                   type="file"
@@ -116,18 +116,21 @@
                 />
               </div>
               <div class="photoav">
-                <img v-if="fileContent" :src="fileContent" alt="Selected photo" >
+                <img
+                  v-if="fileContent"
+                  :src="fileContent"
+                  alt="Selected photo"
+                />
               </div>
             </div>
-              <md-button
-                type="submit"
-                class="md-primary"
-                :disabled="sending"
-                @click="addPhoto()"
-                >Zapisz zmiany</md-button
-              >
-            </div>
-          
+            <md-button
+              type="submit"
+              class="md-primary"
+              :disabled="sending"
+              @click="addPhoto()"
+              >Zapisz zmiany</md-button
+            >
+          </div>
 
           <div class="col-md-4 col-lg-4">
             <md-list>
@@ -176,8 +179,8 @@ import {
   maxLength,
 } from "vuelidate/lib/validators";
 import "./../styles/popularListPage.css";
-import { v4 } from 'uuid';
-import {refreshAvatarSubject$} from  './../main.js';
+import { v4 } from "uuid";
+import { refreshAvatarSubject$ } from "./../main.js";
 
 export default {
   name: "SettingsPage",
@@ -222,6 +225,22 @@ export default {
     },
   },
   methods: {
+    makeToast(variant = null) {
+      if (variant === "info") {
+        this.$bvToast.toast("", {
+          title: `Sukces!`,
+          autoHideDelay: 9000,
+          variant: variant,
+          solid: true,
+        });
+      } else {
+        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz", {
+          title: `Błąd!`,
+          variant: variant,
+          solid: true,
+        });
+      }
+    },
     getValidationClass(fieldName) {
       const field = this.$v.form[fieldName];
 
@@ -244,11 +263,38 @@ export default {
         this.clearForm();
       }, 1500);
     },
-    validateUser() {
-      this.$v.$touch();
+    async updateData() {
+      if(this.$v.$invalid){
+          this.makeToast("danger");
+        return
+      }
 
-      if (!this.$v.$invalid) {
-        this.saveUser();
+      const { currentUser } = firebase.auth();
+      if (!currentUser) {
+        return;
+      }
+
+      const users = firebase.firestore().collection("users");
+
+      try {
+        const snapshot = await users.doc(currentUser.uid).get();
+
+        const user = snapshot.data();
+
+        await users.doc(currentUser.uid).set({
+          ...user,
+          firstName: this.form.name,
+          lastName: this.form.subname,
+          email: this.form.email,
+          gender: this.form.gender,
+          age: this.form.age,
+        });
+
+        this.makeToast("info");
+        this.getBacketsElement();
+        this.closeModal();
+      } catch (error) {
+        console.log(error);
       }
     },
     handleFile() {
@@ -256,10 +302,10 @@ export default {
       this.file = this.$refs.file.files[0];
 
       const reader = new FileReader();
-      reader.readAsDataURL(this.file)
+      reader.readAsDataURL(this.file);
       reader.onload = () => {
         this.fileContent = reader.result;
-      }
+      };
     },
 
     async addPhoto() {
@@ -281,22 +327,21 @@ export default {
         await photoRef.put(this.file);
 
         const snapshot = await userDoc.get();
-        const { photoId , ...rest } = snapshot.data();
-        
-        if(photoId){
-         await storageRef.child(photoId).delete();
+        const { photoId, ...rest } = snapshot.data();
+
+        if (photoId) {
+          await storageRef.child(photoId).delete();
         }
 
         userDoc.set({
           ...rest,
           photoId: hash,
         });
-        
+
         refreshAvatarSubject$.next();
       } catch (error) {
         console.log(error);
       }
-      
     },
   },
   created() {
@@ -331,12 +376,11 @@ export default {
 .setting_page {
   height: 100%;
 }
-.photoav{
+.photoav {
   width: 200px;
   overflow: hidden;
   margin-top: 1em;
   margin-bottom: 1em;
-  
 }
 .md-layout {
   height: 100%;

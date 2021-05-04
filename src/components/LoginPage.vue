@@ -44,7 +44,6 @@
         >Zarejestruj się</md-button
       >
     </form>
-
   </div>
 </template>
 
@@ -112,16 +111,16 @@ export default {
       auth
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(() => {
-          this.makeToast("info");
           this.$router.push("/home");
+          this.makeToast("info");
         })
-        .catch(error => {
+        .catch((error) => {
           this.makeToast("danger");
-          console.log(error)
+          console.log(error);
         })
-        .finally(()=> {
-           this.sending = false;
-        })
+        .finally(() => {
+          this.sending = false;
+        });
     },
     validateUser() {
       this.$v.$touch();

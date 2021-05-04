@@ -1,8 +1,8 @@
 <template>
   <div class="friends_page">
-<div class="centeritems">
-    <h2>Szukaj znajomego</h2>
-</div>
+    <div class="centeritems">
+      <h2>Szukaj znajomego</h2>
+    </div>
     <div class="flexsearch">
       <md-autocomplete
         class="search"
@@ -23,7 +23,6 @@
           :gender="element.gender"
           :photoId="element.photoId"
           :id="element.id"
-          :isFriend="element.isFriend"
           :refreshFun="getUsersList"
         />
       </div>
@@ -81,14 +80,15 @@ export default {
                 (id) => id === snapshot.id
               );
               const isUserOnFriendsList = isUserAFriend ? true : false;
-              usersArray.push({
-                firstName,
-                lastName,
-                photoId,
-                gender,
-                id: snapshot.id,
-                isFriend: isUserOnFriendsList,
-              });
+              if (isUserOnFriendsList) {
+                usersArray.push({
+                  firstName,
+                  lastName,
+                  photoId,
+                  gender,
+                  id: snapshot.id,
+                });
+              }
             }
           });
         })
@@ -105,13 +105,12 @@ export default {
     },
     filteredData() {
       return this.data.filter(({ firstName, lastName }) => {
-
-        if(!this.searchinbase){
-          return true 
+        if (!this.searchinbase) {
+          return true;
         }
 
         const userFullName = `${firstName} ${lastName}`;
-        const clearUserFullName= userFullName.toLowerCase();
+        const clearUserFullName = userFullName.toLowerCase();
         const cleardNameToFind = this.searchinbase.toLowerCase();
         return clearUserFullName.includes(cleardNameToFind);
       });
@@ -121,17 +120,19 @@ export default {
       return this.filteredData.slice(start, start + this.perPage);
     },
     names() {
-      return this.filteredData.map(({ firstName, lastName }) => `${firstName} ${lastName}`);
+      return this.filteredData.map(
+        ({ firstName, lastName }) => `${firstName} ${lastName}`
+      );
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.friends_page{
+.friends_page {
   width: 100%;
 }
-h2{
+h2 {
   padding-top: 0.2em;
   display: flex;
   justify-content: center;
@@ -144,10 +145,10 @@ h2{
   align-items: center;
 }
 .flexsearch {
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    width: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 .search {
   background-color: #eeeeee;

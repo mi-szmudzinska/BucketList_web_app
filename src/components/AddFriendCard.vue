@@ -1,5 +1,5 @@
 <template>
-  <md-card v-if="!isFriend">
+  <md-card>
     <b-avatar variant="light" :size="100">
       <img v-if="url" :src="url" />
     </b-avatar>
@@ -51,6 +51,22 @@ export default {
     },
   },
   methods: {
+    makeToast(variant = null) {
+      if (variant === "success") {
+        this.$bvToast.toast("Udało się pomyślnie dodać znajomego", {
+          title: `Sukces!`,
+          autoHideDelay: 9000,
+          variant: variant,
+          solid: true,
+        });
+      } else {
+        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz", {
+          title: `Błąd!`,
+          variant: variant,
+          solid: true,
+        });
+      }
+    },
     photoUrl() {
       if (!this.photoId) {
         return;
@@ -80,6 +96,7 @@ export default {
           ...rest,
           friends: newFriendsList,
         });
+        this.makeToast("success");
 
         this.refreshFun();
       });

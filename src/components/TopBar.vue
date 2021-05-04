@@ -1,7 +1,7 @@
 <template>
   <div class="top_bar">
     <md-toolbar>
-      <span class="md-title">Bucketdream</span>
+      <span class="md-title">BUCKETDREAM</span>
     </md-toolbar>
   </div>
 </template>
@@ -21,10 +21,9 @@ export default {
   min-height: 50px;
 }
 .md-title {
-  font-size: 1.6em;
-  font-family: "Shine Himawari";
+  font-family: "Monotype Corsiva";
   font-weight: bold;
-  font-size: 32px;
+  font-size: 35px;
 }
 </style>
 

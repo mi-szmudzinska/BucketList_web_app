@@ -1,6 +1,6 @@
 <template>
   <md-card>
-    <div v-if="isFriend" class="row row-content">
+    <div class="row row-content">
       <div class="col-md-3 col-lg-3">
         <b-avatar variant="light" :size="100">
           <img v-if="url" :src="url" />
@@ -12,11 +12,11 @@
           <label>{{ gender }}, {{ age }} lat</label>
 
           <label>Zadania ukończone</label>
-          <k-progress :percent="a" status="success"></k-progress>
+          <k-progress :percent="stats.completedPercentage" status="success"></k-progress>
           <label>Zadania w trakcie realizacji</label>
-          <k-progress :percent="b" status="warning"></k-progress>
+          <k-progress :percent="stats.inProgressPercentage" status="warning"></k-progress>
           <label>Zadania w planach</label>
-          <k-progress :percent="c" status="error"></k-progress>
+          <k-progress :percent="stats.inPlansPercentage"  status="error"></k-progress>
           <div class="friendbuttons">
             <button @click="deleteFriend()">
               <md-icon>delete</md-icon>
@@ -52,20 +52,11 @@ export default {
     photoId: {
       type: String,
     },
-    a: {
-      type: Number,
-    },
-    b: {
-      type: Number,
-    },
-    c: {
-      type: Number,
+    stats: {
+      type: Object,
     },
     id: {
       type: String,
-    },
-    isFriend: {
-      type: Boolean,
     },
     refreshFun: {
       type: Function,
@@ -128,7 +119,7 @@ export default {
           friends: currentFriends,
         });
 
-        this.refreshFun();
+        this.refreshFun(true);
       } catch (error) {
         this.makeToast("danger");
         console.log(error);

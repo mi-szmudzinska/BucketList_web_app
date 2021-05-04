@@ -10,9 +10,7 @@
       :gender="element.gender"
       :age="element.age"
       :photoId="element.photoId"
-      :a="element.a"
-      :b="element.b"
-      :c="element.c"
+      :stats="element.stats"
       :id="element.id"
       :isFriend="element.isFriend"
       :refreshFun="getUsersList"
@@ -31,6 +29,7 @@
 import FriendCardPage from "@/components/FriendCardPage.vue";
 import "./../styles/popularListPage.css";
 import firebase from "firebase";
+import { createStats } from "@/helpers/createChartsPageStats";
 
 export default {
   components: { FriendCardPage },
@@ -72,20 +71,23 @@ export default {
                 photoId,
                 gender,
                 age,
+                backetList,
               } = snapshot.data();
               const isUserAFriend = currentUserFriendsList.find(
                 (id) => id === snapshot.id
               );
               const isUserOnFriendsList = isUserAFriend ? true : false;
-              usersArray.push({
-                firstName,
-                lastName,
-                photoId,
-                gender,
-                age,
-                id: snapshot.id,
-                isFriend: isUserOnFriendsList,
-              });
+              if (!isUserOnFriendsList) {
+                usersArray.push({
+                  firstName,
+                  lastName,
+                  photoId,
+                  gender,
+                  age,
+                  stats: createStats(backetList),
+                  id: snapshot.id,
+                });
+              }
             }
           });
         })
@@ -109,17 +111,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h2{
+h2 {
   padding-top: 0.2em;
   display: flex;
   justify-content: center;
   font-family: "Tagger";
   font-size: 55px;
 }
-.friends_page{
+.friends_page {
   width: 100%;
 }
-.md-card{
+.md-card {
   width: 49%;
 }
 </style>
