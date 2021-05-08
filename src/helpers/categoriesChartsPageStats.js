@@ -1,5 +1,4 @@
 export const createStatsCat = (backetList) => {
-  const all = backetList.length;
   const journey = backetList.filter(
     ({ categoryKey }) => categoryKey === "journey"
   ).length;
@@ -45,19 +44,11 @@ export const createStatsCat = (backetList) => {
 
   return {
     journey: journey,
-    journeyPercentage: Math.floor((journey / all) * 100),
     food: food,
-    foodPercentage: Math.floor((food / all) * 100),
     career: career,
-    careerPercentage: Math.floor((career / all) * 100),
     love: love,
-    lovePercentage: Math.floor((love / all) * 100),
     other: other,
-    otherPercentage: Math.floor((other / all) * 100),
     sport: sport,
-    sportPercentage: Math.floor((sport / all) * 100),
-    charts: {
-      mainStats
-    },
+    chart: mainStats
   };
 };

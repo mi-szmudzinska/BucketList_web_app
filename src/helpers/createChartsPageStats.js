@@ -29,8 +29,6 @@ export const createStats = (backetList) => {
         inProgressPercentage: Math.floor((inProgress/all)*100),
         inPlans: inPlans,
         inPlansPercentage: Math.floor((inPlans/all)*100),
-        charts: {
-            mainStats
-        }
+        chart: mainStats
     }
 }

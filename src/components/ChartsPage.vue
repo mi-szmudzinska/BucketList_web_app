@@ -24,61 +24,142 @@
       </md-content>
     </div>
     <hr />
-    <div class="container-fluid">
-      <h4>Podział na kategorie</h4>
-      <md-content>
-        <div>
-          <PolarAreaChart />
-        </div>
-        <div class="rightstats">
-          <span
-            v-for="(category, index) in categories"
-            :key="index"
-            :id="category.key"
-            >{{ category.name.toUpperCase() }}<br
-          /></span>
-        </div>
-        <div class="numberstats">
-          <span
-            >masz {{ categoriesStats.journey }}
-            {{ getEndOfWord(categoriesStats.journey) }} <br
-          /></span>
-          <span
-            >masz {{ categoriesStats.food }}
-            {{ getEndOfWord(categoriesStats.food) }} <br
-          /></span>
-          <span
-            >masz {{ categoriesStats.career }}
-            {{ getEndOfWord(categoriesStats.career) }} <br
-          /></span>
-          <span
-            >masz {{ categoriesStats.love }}
-            {{ getEndOfWord(categoriesStats.love) }} <br
-          /></span>
-          <span
-            >masz {{ categoriesStats.other }}
-            {{ getEndOfWord(categoriesStats.other) }}<br
-          /></span>
-          <span
-            >masz {{ categoriesStats.sport }}
-            {{ getEndOfWord(categoriesStats.sport) }} <br
-          /></span>
-        </div>
-      </md-content>
-    </div>
-    <div class="container-fluid">
-      <h4>Podział na kategorie</h4>
-      <md-content>
-        <div>
-          <line-chart :chart-data="this.detailsStats"></line-chart>
-        </div>
-      </md-content>
+    <div class="twocharts">
+      <div class="container-fluid">
+        <h4>Podział na kategorie</h4>
+        <md-content>
+          <div class="rightstats">
+            <span
+              v-for="(category, index) in categories"
+              :key="index"
+              :id="category.key"
+              >{{ category.name.toUpperCase() }}<br
+            /></span>
+          </div>
+          <div class="numberstats">
+            <span
+              >masz {{ categoriesStats.journey }}
+              {{ getEndOfWord(categoriesStats.journey) }} <br
+            /></span>
+            <span
+              >masz {{ categoriesStats.food }}
+              {{ getEndOfWord(categoriesStats.food) }} <br
+            /></span>
+            <span
+              >masz {{ categoriesStats.career }}
+              {{ getEndOfWord(categoriesStats.career) }} <br
+            /></span>
+            <span
+              >masz {{ categoriesStats.love }}
+              {{ getEndOfWord(categoriesStats.love) }} <br
+            /></span>
+            <span
+              >masz {{ categoriesStats.other }}
+              {{ getEndOfWord(categoriesStats.other) }}<br
+            /></span>
+            <span
+              >masz {{ categoriesStats.sport }}
+              {{ getEndOfWord(categoriesStats.sport) }} <br
+            /></span>
+          </div>
+          <div>
+            <line-chart :chart-data="this.categoriesStats.chart"></line-chart>
+          </div>
+        </md-content>
+      </div>
+      <hr />
+      <div class="container-fluid">
+        <h4>Podział na statusy zadań w kategoriach</h4>
+        <md-content>
+          <div>
+            <line-chart :chart-data="this.detailsStats.chart"></line-chart>
+          </div>
+          <table>
+            <tr>
+              <th></th>
+              <th>Ukonczone</th>
+              <th>W trakcie realizacji</th>
+              <th>W planach</th>
+            </tr>
+            <tr>
+              <th>Podroze</th>
+              <td>{{ this.detailsStats.tasks.done[0] }}</td>
+              <td>{{ this.detailsStats.tasks.now[0] }}</td>
+              <td>{{ this.detailsStats.tasks.todo[0] }}</td>
+            </tr>
+            <tr>
+              <th>Jedzenie</th>
+              <td>{{ this.detailsStats.tasks.done[1] }}</td>
+              <td>{{ this.detailsStats.tasks.now[1] }}</td>
+              <td>{{ this.detailsStats.tasks.todo[1] }}</td>
+            </tr>
+            <tr>
+              <th>Kariera</th>
+              <td>{{ this.detailsStats.tasks.done[2] }}</td>
+              <td>{{ this.detailsStats.tasks.now[2] }}</td>
+              <td>{{ this.detailsStats.tasks.todo[2] }}</td>
+            </tr>
+            <tr>
+              <th></th>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th></th>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th></th>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </table>
+        </md-content>
+      </div>
     </div>
     <hr />
     <div class="container-fluid">
       <h4>Zobacz jak wypadasz na tle swoich znajomych</h4>
       <md-content class="downblock">
-        <form class="chartfriend">Wykres</form>
+        <div class="divfriends">
+          <div class="useravatar">
+            <b-avatar variant="light" :size="150">
+              <img v-if="url" :src="url" />
+            </b-avatar>
+          </div>
+          <div v-if="friendsDetails">
+          <div class="dive1">
+            <b-avatar variant="light" :size="150">
+              <img v-if="friendsDetails[0]" :src="friendsDetails[0].url" />
+            </b-avatar>
+          </div>
+          <div class="dive2">
+            <b-avatar variant="light" :size="150">
+              <img v-if="friendsDetails[1]" :src="friendsDetails[1].url" />
+            </b-avatar>
+          </div>
+          <div class="dive3">
+            <b-avatar variant="light" :size="150">
+              <img v-if="friendsDetails[2]" :src="friendsDetails[2].url" />
+            </b-avatar>
+          </div>
+          <div class="dive4">
+            <b-avatar variant="light" :size="150">
+              <img v-if="friendsDetails[3]" :src="friendsDetails[3].url" />
+            </b-avatar>
+          </div>
+          <div class="dive5">
+            <b-avatar variant="light" :size="150">
+              <img v-if="friendsDetails[4]" :src="friendsDetails[4].url" />
+            </b-avatar>
+          </div>
+          </div>
+          
+        </div>
         <div class="downstats">
           <h3>TY I %FRINEND%</h3>
           <hr class="friendHR" />
@@ -101,19 +182,26 @@ import { createStats } from "@/helpers/createChartsPageStats";
 import { createStatsCat } from "@/helpers/categoriesChartsPageStats";
 import { createStatsCat2 } from "@/helpers/categoriesChartsPageStats2";
 import RandomChart from "@/components/charts/RandomChart.vue";
-import PolarAreaChart from "@/components/charts/PolarAreaChart.vue";
 
 export default {
   name: "ChartsPage",
   components: {
     LineChart,
     RandomChart,
-    PolarAreaChart,
   },
   data: () => ({
     firstName: "",
     categories: [],
-    detailsStats: null,
+    url: null,
+    friendsDetails: null,
+    detailsStats: {
+      tasks: {
+        done: null,
+        now: null,
+        todo: null,
+      },
+      chart: null,
+    },
     stats: {
       completed: null,
       completedPercentage: null,
@@ -121,26 +209,16 @@ export default {
       inProgressPercentage: null,
       inPlans: null,
       inPlansPercentage: null,
-      charts: {
-        mainStats: null,
-      },
+      chart: null,
     },
     categoriesStats: {
       journey: null,
-      journeyPercentage: null,
       food: null,
-      foodPercentage: null,
       career: null,
-      careerPercentage: null,
       love: null,
-      lovePercentage: null,
       other: null,
-      otherPercentage: null,
       sport: null,
-      sportPercentage: null,
-      charts: {
-        mainStats: null,
-      },
+      chart: null,
     },
   }),
   methods: {
@@ -148,7 +226,6 @@ export default {
       const category = this.categories.find(({ key }) => key === currentKey);
       return category ? category.name : "";
     },
-
     getEndOfWord(index) {
       switch (index) {
         case 1:
@@ -165,7 +242,6 @@ export default {
   },
   created() {
     const { currentUser } = firebase.auth();
-    const users = firebase.firestore().collection("users");
 
     if (!currentUser) {
       return;
@@ -173,21 +249,49 @@ export default {
       this.uid = currentUser.uid;
     }
 
-    users
-      .doc(currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        const { firstName, backetList } = snapshot.data();
+    const userDoc = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+
+    const users = firebase.firestore().collection("users");
+    const app = firebase.firestore().collection("app");
+
+    const urlArray = [];
+
+    Promise.all([users.get(), userDoc.get()])
+      .then(([snapshotOfUsers, snapshotOfCurrentUser]) => {
+        const { firstName, backetList, photoId } = snapshotOfCurrentUser.data();
         this.detailsStats = createStatsCat2(backetList);
         this.stats = createStats(backetList);
         this.categoriesStats = createStatsCat(backetList);
         this.firstName = firstName;
+        this.photoId = photoId;
+        const storage = firebase.storage();
+        const img = storage.ref(this.photoId);
+        img.getDownloadURL().then((url) => {
+          this.url = url;
+        });
+
+        snapshotOfUsers.docs.forEach((snapshot) => {
+          if (snapshot.id !== currentUser.uid) {
+            const { photoId, firstName/* backetList*/ } = snapshot.data();
+            const currentPhotoId = storage.ref(photoId);
+            currentPhotoId.getDownloadURL().then((url) => {
+              urlArray.push({
+                url,
+                firstName,
+                data: null // funkcja przetwarzajca backet
+              });
+            });
+          }
+        });
+
+        this.friendsDetails = urlArray;
       })
       .catch((error) => {
         console.log(error);
       });
-
-    const app = firebase.firestore().collection("app");
 
     app
       .doc("category")
@@ -204,6 +308,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.divfriends {
+  position: relative;
+  background-color: #03a2dc;
+  background-image: url("../assets/back.png");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+}
+.twocharts {
+  width: 100%;
+}
 .container-fluid {
   display: block;
 }
@@ -257,9 +373,9 @@ hr {
   width: 80%;
 }
 .downstats {
-  width: 40%;
+  width: 25%;
+  margin: 4em 0 0 4.5em;
   text-align: center;
-  margin: 10% 4% 0 4%;
 }
 h2 {
   padding-top: 0.4em;
@@ -273,7 +389,7 @@ h3 {
   display: flex;
   justify-content: center;
   font-family: "LoveSummer";
-  font-size: 35px;
+  font-size: 55px;
 }
 h4 {
   display: flex;
@@ -307,5 +423,33 @@ h4 {
 #sport {
   color: #edb5db;
   font-weight: bold;
+}
+.useravatar {
+  position: absolute;
+}
+.dive1 {
+  position: absolute;
+  top: 10px;
+  right: 290px;
+}
+.dive2 {
+  position: absolute;
+  top: 150px;
+  right: 65px;
+}
+.dive3 {
+  position: absolute;
+  top: 410px;
+  right: 160px;
+}
+.dive4 {
+  position: absolute;
+  top: 410px;
+  right: 430px;
+}
+.dive5 {
+  position: absolute;
+  top: 150px;
+  right: 510px;
 }
 </style>

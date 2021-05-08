@@ -97,7 +97,11 @@
                 </md-field>
               </md-list-item>
             </md-list>
-            <md-button type="submit" class="md-primary" :disabled="sending" @click.prevent="updateData()"
+            <md-button
+              type="submit"
+              class="md-primary"
+              :disabled="sending"
+              @click.prevent="updateData()"
               >Zapisz zmiany</md-button
             >
           </div>
@@ -227,14 +231,20 @@ export default {
   methods: {
     makeToast(variant = null) {
       if (variant === "info") {
-        this.$bvToast.toast("", {
+        this.$bvToast.toast("Udało Ci się zaktualizować dane.", {
           title: `Sukces!`,
           autoHideDelay: 9000,
           variant: variant,
           solid: true,
         });
+      } else if (variant === "success") {
+        this.$bvToast.toast("Udało Ci się zmienić zdjęcie profilowe.", {
+          title: `Aktualizacja`,
+          variant: variant,
+          solid: true,
+        });
       } else {
-        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz", {
+        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz.", {
           title: `Błąd!`,
           variant: variant,
           solid: true,
@@ -264,9 +274,9 @@ export default {
       }, 1500);
     },
     async updateData() {
-      if(this.$v.$invalid){
-          this.makeToast("danger");
-        return
+      if (this.$v.$invalid) {
+        this.makeToast("danger");
+        return;
       }
 
       const { currentUser } = firebase.auth();
@@ -291,9 +301,8 @@ export default {
         });
 
         this.makeToast("info");
-        this.getBacketsElement();
-        this.closeModal();
       } catch (error) {
+        this.makeToast("danger");
         console.log(error);
       }
     },
@@ -339,6 +348,7 @@ export default {
         });
 
         refreshAvatarSubject$.next();
+        this.makeToast("info");
       } catch (error) {
         console.log(error);
       }

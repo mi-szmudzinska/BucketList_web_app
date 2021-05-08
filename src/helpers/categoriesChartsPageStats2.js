@@ -1,4 +1,3 @@
-import {randomColor} from "@/helpers/randomColor"
 const getElLengthArrayIfIsCurrentStatus = (elementsArray ,status) => {
   return elementsArray.map(element => (element.filter(({statusKey}) => statusKey ===  status) || []).length)
 }
@@ -22,6 +21,10 @@ export const createStatsCat2 = (backetList) => {
     ({ categoryKey }) => categoryKey === "sport"
   );
 
+  const doneTasks = getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'done')
+  const nowTasks = getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'now')
+  const todoTasks = getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'todo')
+
   const stats = {
     labels: [
       "Podróże",
@@ -34,42 +37,48 @@ export const createStatsCat2 = (backetList) => {
     datasets: [
       {
         label: "Zadania ukonczone",
-        data: getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'done'),
+        data: doneTasks,
         backgroundColor: [
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
+          '#ff8a8f',
+          '#f6d6a6',
+          '#bad6ba',
+          '#dfb8f4',
+          '#92dcef',
+          '#edb5db',
         ]
       },
       {
         label: "Zadania w trakcie realizacji",
-        data: getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'now'),
+        data: nowTasks,
         backgroundColor: [
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
+          '#ff5960',
+          '#f5ba62',
+          '#76d676',
+          '#c674f2',
+          '#59d1f0',
+          '#e364ba',
         ]
       },
       {
         label: "Zadania w zaplanowane",
-        data: getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'todo'),
+        data: todoTasks,
         backgroundColor: [
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
-            randomColor(),
+          '#ff242d',
+          '#f7a120',
+          '#24d624',
+          '#a924f0',
+          '#02bbeb',
+          '#e0099b',
         ]
       },
     ],
   };
-  console.log(stats)
-  return stats
+    return {
+     tasks: {
+       done: doneTasks,
+       now: nowTasks,
+       todo: todoTasks
+     },
+      chart: stats
+    };
 };
