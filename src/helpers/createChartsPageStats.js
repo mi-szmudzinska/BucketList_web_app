@@ -11,7 +11,7 @@ export const createStats = (backetList) => {
         labels: ['Ukończone zadania','W trakcie realizacji','W planach'],
         datasets: [
           {
-            label: "My First Dataset",
+            label: "Twoje cele",
             backgroundColor: [
                 'rgb(255, 99, 132)',
                 'rgb(54, 162, 235)',

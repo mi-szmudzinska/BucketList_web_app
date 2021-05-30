@@ -77,7 +77,7 @@ export default {
                 (id) => id === snapshot.id
               );
               const isUserOnFriendsList = isUserAFriend ? true : false;
-              if (!isUserOnFriendsList) {
+              if (isUserOnFriendsList) {
                 usersArray.push({
                   firstName,
                   lastName,

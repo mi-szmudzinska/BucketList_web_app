@@ -10,9 +10,7 @@
           <md-card-header>
             <md-button @click="showModal(name)"
               >{{ name }}
-              <md-icon id="arrow-icon">label_important</md-icon></md-button
-            >
-
+              <md-icon id="arrow-icon">label_important</md-icon></md-button>
             <span class="md-subhead">{{ desc }}</span>
           </md-card-header>
 
@@ -63,7 +61,7 @@ export default {
     },
     photoId: {
       type: String,
-    }
+    },
   },
   data: () => ({
     url: null,

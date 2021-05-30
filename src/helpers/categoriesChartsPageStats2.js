@@ -1,4 +1,4 @@
-const getElLengthArrayIfIsCurrentStatus = (elementsArray ,status) => {
+export const getElLengthArrayIfIsCurrentStatus = (elementsArray ,status) => {
   return elementsArray.map(element => (element.filter(({statusKey}) => statusKey ===  status) || []).length)
 }
 

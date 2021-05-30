@@ -70,12 +70,12 @@
             <h5>{{ activeBucket.desc }}</h5>
             <div class="imagesmodal">
               <img v-if="url" :src="activeBucket.url" />
-              <img v-else src="skds.jpg" />
             </div>
             <h6>{{ activeBucket.longdesc }}</h6>
             <div class="dropdownmenu">
               <span> Dodaj do swojej listy jako: </span>
               <select v-model="selected">
+                <option disabled value="">Wybierz status</option>
                 <option
                   v-for="(status, index) in statuses"
                   :key="index"
@@ -86,7 +86,10 @@
               </select>
             </div>
             <div class="toend">
-              <b-button variant="success" @click="addOneBacket(activeBucket)"
+              <b-button
+                variant="success"
+                :disabled="selected === null"
+                @click="addOneBacket(activeBucket)"
                 >Dodaj</b-button
               >
               <b-button variant="danger" @click="closeModal()">Anuluj</b-button>
@@ -117,7 +120,7 @@ export default {
     searchinbase: null,
     data: [],
     activeBucket: null,
-    selected: "",
+    selected: null,
     statuses: [],
     url: null,
   }),
@@ -215,20 +218,17 @@ export default {
       if (!currentUser) {
         return;
       }
-
       const users = firebase.firestore().collection("users");
       const app = firebase.firestore().collection("app");
 
       try {
         const userSnapshot = await users.doc(currentUser.uid).get();
         const { backetList } = userSnapshot.data();
-
         const defaultBacketListElementsSnapshot = await app
           .doc("defaultBacketListElements")
           .get();
 
         const { elements } = defaultBacketListElementsSnapshot.data();
-
         const backets = elements.filter((backet) => {
           const searchedBacket = backetList.find(
             (userBacket) =>
@@ -237,7 +237,6 @@ export default {
           );
           return searchedBacket ? false : true;
         });
-
         this.data = backets;
       } catch (error) {
         console.log(error);
@@ -327,6 +326,9 @@ h4 {
   display: flex;
   justify-content: center;
 }
+h3{
+  font-family: "Tagger";
+}
 h2 {
   padding-top: 0.2em;
   display: flex;
@@ -374,21 +376,33 @@ button {
 }
 #journey {
   background: url(../assets/plane.png) no-repeat #ff8a8f center;
+  color: black;
+  font-weight: 600;
 }
 #food {
   background: url(../assets/icecream.png) no-repeat#f6d6a6 center;
+  color: black;
+  font-weight: 600;
 }
 #career {
   background: url(../assets/career.png) no-repeat #bad6ba center;
+  color: black;
+  font-weight: 600;
 }
 #love {
   background: url(../assets/heart.png) no-repeat#dfb8f4 center;
+  color: black;
+  font-weight: 600;
 }
 #sport {
   background: url(../assets/ball.png) no-repeat #edb5db center;
+  color: black;
+  font-weight: 600;
 }
 #other {
   background: url(../assets/star.png) no-repeat #92dcef center;
+  color: black;
+  font-weight: 600;
 }
 .journey {
   color: #ff8a8f;

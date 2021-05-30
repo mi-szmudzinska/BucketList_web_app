@@ -22,8 +22,8 @@
 
             <md-field md-clearable>
               <label
-                >To pole jest na opis dla Ciebie byś kiedyś miał co
-                wspominać!</label
+                >To pole jest na opis dla Ciebie byś kiedyś miał
+                cowspominać!</label
               >
               <md-textarea v-model="longdesc" md-counter="500"></md-textarea>
             </md-field>
@@ -71,10 +71,14 @@
                 />
               </div>
               <div class="photoex">
-                <img v-if="fileContent" :src="fileContent" alt="Selected photo">
+                <img
+                  v-if="fileContent"
+                  :src="fileContent"
+                  alt="Selected photo"
+                />
               </div>
             </div>
-            <md-button clas="addtolist" @click="addBacket()"
+            <md-button clas="addtolist" @click.prevent="addBacket()"
               >Dodaj do swojej listy!</md-button
             >
           </form>
@@ -87,38 +91,93 @@
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
 import "./../styles/popularListPage.css";
 import "./../styles/modal.css";
 import firebase from "firebase";
-import { v4 } from 'uuid';
+import { v4 } from "uuid";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "AddToMyList",
+  mixins: [validationMixin],
   data: () => ({
-    selected: "",
-    active: false,
-    title: "",
+    selected: null,
+    title: null,
     file: null,
-    desc: "",
-    longdesc: "",
+    desc: null,
+    longdesc: null,
     fileContent: null,
-    categoryKey: "",
-    status: "",
+    categoryKey: null,
+    status: null,
     statuses: [],
     categories: [],
   }),
+  validations: {
+    selected: {
+      required,
+    },
+    title: {
+      required,
+    },
+    file: {
+      required,
+    },
+    desc: {
+      required,
+    },
+    longdesc: {
+      required,
+    },
+    categoryKey: {
+      required,
+    },
+    status: {
+      required,
+    },
+  },
   methods: {
+    makeToast(variant = null) {
+      if (variant === "success") {
+        this.$bvToast.toast("Udało się dodać zadanie do twojej Bucketlisty!", {
+          title: `Sukces!`,
+          variant: variant,
+          solid: true,
+        });
+      } else if (variant === "info") {
+        this.$bvToast.toast(
+          "Sprawdź czy uzupełniłeś wszytskie wymagane informacje.",
+          {
+            title: `Błąd!`,
+            variant: variant,
+            solid: true,
+          }
+        );
+      } else if (variant === "danger") {
+        this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz.", {
+          title: `Błąd!`,
+          variant: variant,
+          solid: true,
+        });
+      }
+    },
     handleFile() {
-      console.log(this.$refs.file.files[0]);
       this.file = this.$refs.file.files[0];
 
       const reader = new FileReader();
-      reader.readAsDataURL(this.file)
+      reader.readAsDataURL(this.file);
       reader.onload = () => {
         this.fileContent = reader.result;
-      }
+      };
     },
     async addBacket() {
+      this.$v.$touch();
+
+      if (this.$v.$invalid) {
+        this.makeToast("info");
+        return;
+      }
+
       const { currentUser } = firebase.auth();
       if (!currentUser) {
         return;
@@ -129,15 +188,12 @@ export default {
         .collection("users")
         .doc(currentUser.uid);
 
-        
-
       try {
-
         const hash = v4();
         const defaultBacketListElementId = v4();
         const storageRef = firebase.storage().ref();
         const photoRef = storageRef.child(hash);
-        await photoRef.put(this.file)
+        await photoRef.put(this.file);
 
         const snapshot = await userDoc.get();
         const { backetList, ...rest } = snapshot.data();
@@ -164,7 +220,10 @@ export default {
           ...rest,
           backetList: newBacketList,
         });
+
+        this.makeToast("success");
       } catch (error) {
+        this.makeToast("danger");
         console.log(error);
       }
     },
@@ -202,7 +261,7 @@ export default {
 
 <style lang="scss" scoped>
 .md-field {
-  background-color: rgb(187, 245, 255);
+  background-color: rgb(190, 226, 255);
   border-radius: 0.5em;
 }
 p {
@@ -211,7 +270,7 @@ p {
 input {
   margin-bottom: 1em;
 }
-.photoex{
+.photoex {
   width: 100%;
   overflow: hidden;
 }
@@ -272,20 +331,32 @@ h6 {
 }
 #journey {
   background-color: #ff8a8f;
+  color: black;
+  font-weight: 600;
 }
 #food {
   background-color: #f6d6a6;
+  color: black;
+  font-weight: 600;
 }
 #career {
   background-color: #bad6ba;
+  color: black;
+  font-weight: 600;
 }
 #love {
   background-color: #dfb8f4;
+  color: black;
+  font-weight: 600;
 }
 #sport {
   background-color: #edb5db;
+  color: black;
+  font-weight: 600;
 }
 #other {
   background-color: #92dcef;
+  color: black;
+  font-weight: 600;
 }
 </style>

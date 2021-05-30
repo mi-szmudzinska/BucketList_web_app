@@ -12,11 +12,20 @@
           <label>{{ gender }}, {{ age }} lat</label>
 
           <label>Zadania ukończone</label>
-          <k-progress :percent="stats.completedPercentage" status="success"></k-progress>
+          <k-progress
+            :percent="stats.completedPercentage"
+            status="success"
+          ></k-progress>
           <label>Zadania w trakcie realizacji</label>
-          <k-progress :percent="stats.inProgressPercentage" status="warning"></k-progress>
+          <k-progress
+            :percent="stats.inProgressPercentage"
+            status="warning"
+          ></k-progress>
           <label>Zadania w planach</label>
-          <k-progress :percent="stats.inPlansPercentage"  status="error"></k-progress>
+          <k-progress
+            :percent="stats.inPlansPercentage"
+            status="error"
+          ></k-progress>
           <div class="friendbuttons">
             <button @click="deleteFriend()">
               <md-icon>delete</md-icon>
@@ -102,17 +111,12 @@ export default {
       if (!currentUser) {
         return;
       }
-
       const users = firebase.firestore().collection("users");
 
       try {
         const snapshot = await users.doc(currentUser.uid).get();
-
         const { friends, ...rest } = snapshot.data();
-
         const currentFriends = friends.filter((id) => id !== this.id);
-
-        this.makeToast("success"); //? xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
         await users.doc(currentUser.uid).set({
           ...rest,
@@ -124,86 +128,6 @@ export default {
         this.makeToast("danger");
         console.log(error);
       }
-    },
-    async updatedata() {
-      const { currentUser } = firebase.auth();
-      if (!currentUser) {
-        return;
-      }
-
-      const users = firebase.firestore().collection("users");
-
-      try {
-        const snapshot = await users.doc(currentUser.uid).get();
-
-        const { friends, ...rest } = snapshot.data();
-
-        const currentFriends = friends.filter(
-          (friend) => friend.id !== this.friend.id
-        );
-        const index = friends.indexOf(currentFriends);
-        friends[index].id = this.id; //?
-
-        await users.doc(currentUser.uid).set({
-          ...rest,
-          friends,
-        });
-        this.makeToast("info");
-        this.getUsersList();
-        this.closeModal();
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    getUsersList() {
-      const { currentUser } = firebase.auth();
-      if (!currentUser) {
-        return;
-      }
-      const userDoc = firebase
-        .firestore()
-        .collection("users")
-        .doc(currentUser.uid);
-
-      const users = firebase.firestore().collection("users");
-
-      const usersArray = [];
-
-      Promise.all([users.get(), userDoc.get()])
-        .then(([snapshotOfUsers, snapshotOfCurrentUser]) => {
-          const { friends } = snapshotOfCurrentUser.data();
-          const currentUserFriendsList = friends || [];
-
-          snapshotOfUsers.docs.forEach((snapshot) => {
-            if (snapshot.id !== currentUser.uid) {
-              const {
-                firstName,
-                lastName,
-                photoId,
-                gender,
-                age,
-              } = snapshot.data();
-              const isUserAFriend = currentUserFriendsList.find(
-                (id) => id === snapshot.id
-              );
-              const isUserOnFriendsList = isUserAFriend ? true : false;
-              usersArray.push({
-                firstName,
-                lastName,
-                photoId,
-                gender,
-                age,
-                id: snapshot.id,
-                isFriend: isUserOnFriendsList,
-              });
-            }
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      this.data = usersArray;
     },
   },
 };

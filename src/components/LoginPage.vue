@@ -76,13 +76,7 @@ export default {
   },
   methods: {
     makeToast(variant = null) {
-      if (variant === "info") {
-        this.$bvToast.toast("Udało Ci się zalogować.", {
-          title: `Sukces!`,
-          variant: variant,
-          solid: true,
-        });
-      } else {
+      if (variant === "danger") {
         this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz!", {
           title: `Błąd!`,
           variant: variant,
@@ -112,7 +106,6 @@ export default {
         .signInWithEmailAndPassword(this.form.email, this.form.password)
         .then(() => {
           this.$router.push("/home");
-          this.makeToast("info");
         })
         .catch((error) => {
           this.makeToast("danger");

@@ -97,7 +97,6 @@
           <h5>{{ activeBucket.desc }}</h5>
           <div class="imagesmodal">
             <img v-if="url" :src="activeBucket.url" />
-            <img v-else src="skds.jpg" />
           </div>
           <h6>{{ activeBucket.longdesc }}</h6>
           <div class="dropdownmen">
@@ -116,7 +115,7 @@
           <div class="toend">
             <b-button variant="success" @click="updatedata()">Zapisz</b-button>
             <b-button class="deletebucket" @click="deletebucket()">
-              Usuń z swojej listy
+              Usuń ze swojej listy
             </b-button>
             <b-button variant="danger" @click="closeModal()">Odrzuć</b-button>
           </div>
@@ -469,30 +468,45 @@ h4 {
 }
 #journey {
   background-color: #ff8a8f;
+  color: black;
+  font-weight: 600;
 }
 #food {
   background-color: #f6d6a6;
+  color: black;
+  font-weight: 600;
 }
 #career {
   background-color: #bad6ba;
+  color: black;
+  font-weight: 600;
 }
 #love {
   background-color: #dfb8f4;
+  color: black;
+  font-weight: 600;
 }
 #sport {
   background-color: #edb5db;
+  color: black;
+  font-weight: 600;
 }
 #other {
   background-color: #92dcef;
+  color: black;
+  font-weight: 600;
 }
 #now {
   background-color: #ffe46b;
+  color: black;
 }
 #todo {
   background-color: #9af3f7;
+  color: black;
 }
 #done {
   background-color: #a0fdc4;
+  color: black;
 }
 .journey {
   color: #ff8a8f;

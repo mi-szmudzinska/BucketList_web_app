@@ -1,23 +1,32 @@
 <template>
   <div class="charts_page">
+    <span
+      v-if="!stats.completed && !stats.inProgress && !stats.inPlans"
+      class="infobefore"
+    >
+      By śledzić swój postęp dodaj zadanie do swojej listy!
+    </span>
+    <h4>Twoje cele</h4>
     <div class="container-fluid">
-      <h2>TWOJE CELE</h2>
       <md-content>
         <div>
-          <RandomChart />
+          <line-chart :chart-data="this.stats.chart"></line-chart>
         </div>
         <div class="rightstats">
           <h4>Gratulacje {{ firstName }}!</h4>
           <span class="sm-list-item-text"
-            >Ukończyłaś {{ stats.completed }} swoich celów co daje
+            >Ukończyłe(a)ś {{ stats.completed }} swoich
+            {{ getEndOfWord(stats.completed) }} co daje
             {{ stats.completedPercentage }}%</span
           >
           <span class="sm-list-item-text"
-            >W trakcie realizacji masz {{ stats.inProgress }} celów co daje
+            >W trakcie realizacji masz {{ stats.inProgress }}
+            {{ getEndOfWord(stats.inProgress) }} co daje
             {{ stats.inProgressPercentage }}%</span
           >
           <span class="sm-list-item-text"
-            >W planach masz {{ stats.inPlans }} celów co daje
+            >W planach masz {{ stats.inPlans }}
+            {{ getEndOfWord(stats.inPlans) }} co daje
             {{ stats.inPlansPercentage }}%</span
           >
         </div>
@@ -25,8 +34,10 @@
     </div>
     <hr />
     <div class="twocharts">
-      <div class="container-fluid">
-        <h4>Podział na kategorie</h4>
+      <h4>Podział na kategorie</h4>
+      <div
+        categoriesStats.chartclass="container-fluid"
+      >
         <md-content>
           <div class="rightstats">
             <span
@@ -62,62 +73,22 @@
               {{ getEndOfWord(categoriesStats.sport) }} <br
             /></span>
           </div>
+
           <div>
             <line-chart :chart-data="this.categoriesStats.chart"></line-chart>
           </div>
         </md-content>
       </div>
       <hr />
+      <h4>Podział na statusy zadań w kategoriach</h4>
       <div class="container-fluid">
-        <h4>Podział na statusy zadań w kategoriach</h4>
         <md-content>
           <div>
             <line-chart :chart-data="this.detailsStats.chart"></line-chart>
           </div>
-          <table>
-            <tr>
-              <th></th>
-              <th>Ukonczone</th>
-              <th>W trakcie realizacji</th>
-              <th>W planach</th>
-            </tr>
-            <tr>
-              <th>Podroze</th>
-              <td>{{ this.detailsStats.tasks.done[0] }}</td>
-              <td>{{ this.detailsStats.tasks.now[0] }}</td>
-              <td>{{ this.detailsStats.tasks.todo[0] }}</td>
-            </tr>
-            <tr>
-              <th>Jedzenie</th>
-              <td>{{ this.detailsStats.tasks.done[1] }}</td>
-              <td>{{ this.detailsStats.tasks.now[1] }}</td>
-              <td>{{ this.detailsStats.tasks.todo[1] }}</td>
-            </tr>
-            <tr>
-              <th>Kariera</th>
-              <td>{{ this.detailsStats.tasks.done[2] }}</td>
-              <td>{{ this.detailsStats.tasks.now[2] }}</td>
-              <td>{{ this.detailsStats.tasks.todo[2] }}</td>
-            </tr>
-            <tr>
-              <th></th>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th></th>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th></th>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </table>
+          <div class="divatable">
+            <CompareTable :data="this.detailsStats.tasks" />
+          </div>
         </md-content>
       </div>
     </div>
@@ -126,49 +97,78 @@
       <h4>Zobacz jak wypadasz na tle swoich znajomych</h4>
       <md-content class="downblock">
         <div class="divfriends">
-          <div class="useravatar">
-            <b-avatar variant="light" :size="150">
-              <img v-if="url" :src="url" />
-            </b-avatar>
-          </div>
           <div v-if="friendsDetails">
-          <div class="dive1">
-            <b-avatar variant="light" :size="150">
-              <img v-if="friendsDetails[0]" :src="friendsDetails[0].url" />
-            </b-avatar>
+            <div class="useravatar">
+              <b-avatar variant="light" :size="150">
+                <img v-if="url" :src="url" />
+              </b-avatar>
+            </div>
+
+            <div class="dive1" @click="compareWithFriend(0)">
+              <b-avatar
+                :class="{
+                  active: selectedFriend && selectedFriend.index === 0,
+                }"
+                variant="light"
+                :size="150"
+              >
+                <img v-if="friendsDetails[0]" :src="friendsDetails[0].url" />
+              </b-avatar>
+            </div>
+            <div class="dive2" @click="compareWithFriend(1)">
+              <b-avatar
+                :class="{
+                  active: selectedFriend && selectedFriend.index === 1,
+                }"
+                variant="light"
+                :size="150"
+              >
+                <img v-if="friendsDetails[1]" :src="friendsDetails[1].url" />
+              </b-avatar>
+            </div>
+            <div class="dive3" @click="compareWithFriend(2)">
+              <b-avatar
+                :class="{
+                  active: selectedFriend && selectedFriend.index === 2,
+                }"
+                variant="light"
+                :size="150"
+              >
+                <img v-if="friendsDetails[2]" :src="friendsDetails[2].url" />
+              </b-avatar>
+            </div>
+            <div class="dive4" @click="compareWithFriend(3)">
+              <b-avatar
+                :class="{
+                  active: selectedFriend && selectedFriend.index === 3,
+                }"
+                variant="light"
+                :size="150"
+              >
+                <img v-if="friendsDetails[3]" :src="friendsDetails[3].url" />
+              </b-avatar>
+            </div>
+            <div class="dive5" @click="compareWithFriend(4)">
+              <b-avatar
+                :class="{
+                  active: selectedFriend && selectedFriend.index === 4,
+                }"
+                variant="light"
+                :size="150"
+              >
+                <img v-if="friendsDetails[4]" :src="friendsDetails[4].url" />
+              </b-avatar>
+            </div>
           </div>
-          <div class="dive2">
-            <b-avatar variant="light" :size="150">
-              <img v-if="friendsDetails[1]" :src="friendsDetails[1].url" />
-            </b-avatar>
-          </div>
-          <div class="dive3">
-            <b-avatar variant="light" :size="150">
-              <img v-if="friendsDetails[2]" :src="friendsDetails[2].url" />
-            </b-avatar>
-          </div>
-          <div class="dive4">
-            <b-avatar variant="light" :size="150">
-              <img v-if="friendsDetails[3]" :src="friendsDetails[3].url" />
-            </b-avatar>
-          </div>
-          <div class="dive5">
-            <b-avatar variant="light" :size="150">
-              <img v-if="friendsDetails[4]" :src="friendsDetails[4].url" />
-            </b-avatar>
-          </div>
-          </div>
-          
         </div>
         <div class="downstats">
-          <h3>TY I %FRINEND%</h3>
-          <hr class="friendHR" />
-          <span class="item-text"
-            >Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error
-            quibusdam, non molestias et! Earum magnam, similique, quo recusandae
-            placeat dicta asperiores modi sint ea repudiandae maxime? Quae non
-            explicabo, neque.</span
-          >
+          <div v-if="selectedFriend">
+            <h3>TY I {{ selectedFriend.name.toUpperCase() }}</h3>
+            <hr class="friendHR" />
+            <span class="item-text">Zobacz ile macie wspólnych celów! </span>
+
+            <CompareTable :data="selectedFriend.data" />
+          </div>
         </div>
       </md-content>
     </div>
@@ -177,19 +177,22 @@
 
 <script>
 import LineChart from "@/helpers/LineChartPolarArea.js";
+import CompareTable from "@/components/CompareTable.vue";
 import firebase from "firebase";
 import { createStats } from "@/helpers/createChartsPageStats";
 import { createStatsCat } from "@/helpers/categoriesChartsPageStats";
 import { createStatsCat2 } from "@/helpers/categoriesChartsPageStats2";
-import RandomChart from "@/components/charts/RandomChart.vue";
+import { compareBackets } from "@/helpers/compareBackets";
 
 export default {
   name: "ChartsPage",
   components: {
     LineChart,
-    RandomChart,
+    CompareTable,
   },
   data: () => ({
+    active: false,
+    selectedFriend: null,
     firstName: "",
     categories: [],
     url: null,
@@ -222,6 +225,24 @@ export default {
     },
   }),
   methods: {
+    compareWithFriend(index) {
+      if (!this.friendsDetails[index]) {
+        return;
+      }
+
+      if (this.selectedFriend && this.selectedFriend.index === index) {
+        this.selectedFriend = null;
+        return;
+      }
+
+      const friend = this.friendsDetails[index];
+
+      this.selectedFriend = {
+        index,
+        name: friend.firstName,
+        data: friend.data,
+      };
+    },
     getCategoryName(currentKey) {
       const category = this.categories.find(({ key }) => key === currentKey);
       return category ? category.name : "";
@@ -261,7 +282,12 @@ export default {
 
     Promise.all([users.get(), userDoc.get()])
       .then(([snapshotOfUsers, snapshotOfCurrentUser]) => {
-        const { firstName, backetList, photoId } = snapshotOfCurrentUser.data();
+        const {
+          firstName,
+          backetList,
+          photoId,
+          friends,
+        } = snapshotOfCurrentUser.data();
         this.detailsStats = createStatsCat2(backetList);
         this.stats = createStats(backetList);
         this.categoriesStats = createStatsCat(backetList);
@@ -274,14 +300,19 @@ export default {
         });
 
         snapshotOfUsers.docs.forEach((snapshot) => {
-          if (snapshot.id !== currentUser.uid) {
-            const { photoId, firstName/* backetList*/ } = snapshot.data();
+          const isFriend = friends.find((id) => id === snapshot.id);
+          if (snapshot.id !== currentUser.uid && isFriend) {
+            const {
+              photoId,
+              firstName,
+              backetList: friendBacketList,
+            } = snapshot.data();
             const currentPhotoId = storage.ref(photoId);
             currentPhotoId.getDownloadURL().then((url) => {
               urlArray.push({
                 url,
                 firstName,
-                data: null // funkcja przetwarzajca backet
+                data: compareBackets(backetList, friendBacketList),
               });
             });
           }
@@ -308,10 +339,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.active {
+  border: 3px outset rgb(0, 140, 255);
+  width: 170px !important;
+  height: 170px !important;
+}
 .divfriends {
   position: relative;
-  background-color: #03a2dc;
-  background-image: url("../assets/back.png");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -373,8 +407,8 @@ hr {
   width: 80%;
 }
 .downstats {
-  width: 25%;
-  margin: 4em 0 0 4.5em;
+  width: 50%;
+  margin: 4em 0 0 0.5em;
   text-align: center;
 }
 h2 {
@@ -393,12 +427,15 @@ h3 {
 }
 h4 {
   display: flex;
+  margin-top: 0.5em;
   justify-content: center;
   font-family: "Tagger";
   font-size: 35px;
 }
+
 .item-text {
   color: #03a2dc;
+  margin-bottom: 2em;
 }
 #journey {
   color: #ff8a8f;
@@ -426,30 +463,50 @@ h4 {
 }
 .useravatar {
   position: absolute;
+  top: 220px;
+  right: 280px;
+}
+table {
+  margin-top: 1em;
+}
+.divatable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .dive1 {
   position: absolute;
-  top: 10px;
-  right: 290px;
+  top: 5%;
+  right: 45%;
 }
 .dive2 {
   position: absolute;
-  top: 150px;
-  right: 65px;
+  top: 23%;
+  right: 8%;
 }
 .dive3 {
   position: absolute;
-  top: 410px;
-  right: 160px;
+  top: 60%;
+  right: 20%;
 }
 .dive4 {
   position: absolute;
-  top: 410px;
-  right: 430px;
+  top: 65%;
+  right: 65%;
 }
 .dive5 {
   position: absolute;
-  top: 150px;
-  right: 510px;
+  top: 28%;
+  right: 80%;
+}
+.card {
+  border: none;
+}
+.infobefore {
+  display: flex;
+  justify-content: center;
+  font-family: "Lemon Tuesday";
+  margin: 1em 0 1em 0;
+  font-size: 30px;
 }
 </style>

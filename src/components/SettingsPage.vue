@@ -1,12 +1,12 @@
 <template>
   <div class="setting_page">
-    <form novalidate class="md-layout">
-      <div class="viewport">
-        <md-toolbar>
-          <span class="md-title">USTAWIENIA PROFILU</span>
-        </md-toolbar>
-        <div class="row row-content">
-          <div class="col-md-4 col-lg-4">
+    <div class="viewport">
+      <md-toolbar>
+        <span class="md-title">USTAWIENIA PROFILU</span>
+      </md-toolbar>
+      <div class="divform">
+        <form novalidate class="md-layout">
+          <div class="col-md-3 col-lg-3">
             <md-list>
               <md-subheader>Email</md-subheader>
 
@@ -62,9 +62,7 @@
                   >
                 </md-field>
               </md-list-item>
-            </md-list>
 
-            <md-list>
               <md-subheader>Wiek</md-subheader>
               <md-list-item>
                 <md-field :class="getValidationClass('age')">
@@ -96,17 +94,19 @@
                   </md-select>
                 </md-field>
               </md-list-item>
-            </md-list>
-            <md-button
-              type="submit"
-              class="md-primary"
-              :disabled="sending"
-              @click.prevent="updateData()"
-              >Zapisz zmiany</md-button
-            >
-          </div>
 
-          <div class="col-md-4 col-lg-4">
+              <md-button
+                type="submit"
+                class="md-primary"
+                :disabled="sending"
+                @click.prevent="updateData()"
+                >Zapisz zmiany</md-button
+              >
+            </md-list>
+          </div>
+        </form>
+        <form novalidate class="md-layout">
+          <div class="col-md-3 col-lg-3">
             <div class="addphoto">
               <md-subheader>Zdjęcie profilowe</md-subheader>
               <div>
@@ -131,12 +131,13 @@
               type="submit"
               class="md-primary"
               :disabled="sending"
-              @click="addPhoto()"
+              @click.prevent="addPhoto()"
               >Zapisz zmiany</md-button
             >
           </div>
-
-          <div class="col-md-4 col-lg-4">
+        </form>
+        <form novalidate class="md-layout">
+          <div class="col-md-3 col-lg-3">
             <md-list>
               <md-subheader>Nowe hasło</md-subheader>
               <md-list-item>
@@ -162,14 +163,13 @@
               </md-list-item>
             </md-list>
 
-            <md-button type="submit" class="md-primary" :disabled="sending"
+            <md-button type="submit" class="md-primary" :disabled="sending" @click.prevent="changePassword"
               >Zapisz zmiany</md-button
             >
           </div>
-        </div>
-        <md-progress-bar md-mode="indeterminate" v-if="sending" />
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
@@ -198,6 +198,7 @@ export default {
       subname: "",
       age: "",
       gender: "",
+      newpassword: ""
     },
     userSaved: false,
     sending: false,
@@ -229,6 +230,25 @@ export default {
     },
   },
   methods: {
+    async changePassword(){
+      try {  
+         await firebase.auth().currentUser.updatePassword(this.form.newpassword)
+          this.$bvToast.toast("Udało Ci się zaktualizować hasło.", {
+          title: `Sukces!`,
+          autoHideDelay: 9000,
+          variant: "success",
+          solid: true,
+        });
+      } catch (error) {
+        console.log(error)
+          this.$bvToast.toast("Coś poszło nie tak, spróbuj jeszcze raz.", {
+          title: `Bład!`,
+          variant: "danger",
+          solid: true,
+        });
+      }
+    
+    },
     makeToast(variant = null) {
       if (variant === "info") {
         this.$bvToast.toast("Udało Ci się zaktualizować dane.", {
@@ -338,7 +358,7 @@ export default {
         const snapshot = await userDoc.get();
         const { photoId, ...rest } = snapshot.data();
 
-        if (photoId) {
+        if (photoId && photoId !== "user.png" ) {
           await storageRef.child(photoId).delete();
         }
 
@@ -383,6 +403,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.divform {
+  display: flex;
+  height: 800px;
+}
 .setting_page {
   height: 100%;
 }
@@ -400,7 +424,6 @@ export default {
   display: inline-block;
   vertical-align: top;
   overflow: auto;
-  border: 1px solid rgba(#000, 0.12);
 }
 .md-error {
   color: rgb(255, 0, 0);
@@ -424,7 +447,16 @@ export default {
   height: 40%;
   width: 100%;
 }
-.col-md-4 {
+form{
+width: 100%;
+}
+.md-list-item{
+  width: 300px;
+}
+.col-md-3 {
+  display: block;
+  justify-content: center;
+  max-width: 100%;
   border-left: 4px solid #dfdfdf;
 }
 .md-button {
@@ -436,6 +468,9 @@ export default {
   display: flex;
   justify-content: center;
   align-content: center;
+}
+.md-elevation-4 {
+    box-shadow: 0 1px 2px -1px;
 }
 .editphoto {
   padding-top: 1em;

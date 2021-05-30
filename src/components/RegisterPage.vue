@@ -10,9 +10,9 @@
               <md-field :class="getValidationClass('firstName')">
                 <label for="first-name">Imię</label>
                 <md-input
+                  type="first-name"
                   name="first-name"
                   id="first-name"
-                  autocomplete="given-name"
                   v-model="form.firstName"
                   :disabled="sending"
                 />
@@ -27,9 +27,9 @@
               <md-field :class="getValidationClass('lastName')">
                 <label for="last-name">Nazwisko</label>
                 <md-input
+                type="last-name"
                   name="last-name"
                   id="last-name"
-                  autocomplete="family-name"
                   v-model="form.lastName"
                   :disabled="sending"
                 />
@@ -47,7 +47,6 @@
                 type="number"
                 id="age"
                 name="age"
-                autocomplete="age"
                 v-model="form.age"
                 :disabled="sending"
               />
@@ -65,7 +64,6 @@
                     type="gender"
                     name="gender"
                     id="gender"
-                    autocomplete="gender"
                     v-model="form.gender"
                     :disabled="sending"
                   >
@@ -83,7 +81,6 @@
               type="email"
               name="email"
               id="email"
-              autocomplete="email"
               v-model="form.email"
               :disabled="sending"
             />
@@ -101,7 +98,6 @@
                 type="password"
                 id="password"
                 name="password"
-                autocomplete="agpassworde"
                 v-model="form.password"
                 :disabled="sending"
               />
@@ -150,7 +146,7 @@ export default {
       gender: null,
       email: null,
       password: null,
-      photoId: "",
+      photoId: "user.png",
     },
     userSaved: false,
     sending: false,
@@ -184,6 +180,15 @@ export default {
     },
   },
   methods: {
+        makeToast(variant = null) {
+      if (variant === "danger") {
+        this.$bvToast.toast("Użytkownik o podanych danych istnieje, spróbuj jeszcze raz", {
+          title: `Błąd!`,
+          variant: variant,
+          solid: true,
+        });
+      }
+    },
     getValidationClass(fieldName) {
       const field = this.$v.form[fieldName];
 
@@ -207,7 +212,6 @@ export default {
       const auth =  firebase
         .auth();
 
-
       auth
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then((user) => {
@@ -222,7 +226,8 @@ export default {
               age: this.form.age,
               gender: this.form.gender,
               photoId: this.form.photoId,
-              
+              backetList: [],
+              friends: []
             });
         })
         .then(() => {
@@ -231,7 +236,11 @@ export default {
         .then(() => {
             this.$router.push("/");
         })
-        .catch();
+        .catch((error) => {
+        this.makeToast("danger");
+        console.log(error);
+        this.clearForm();
+      });
     },
     validateUser() {
       this.$v.$touch();

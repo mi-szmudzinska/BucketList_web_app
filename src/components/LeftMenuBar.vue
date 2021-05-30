@@ -82,11 +82,9 @@ export default {
   name: "LeftMenuBar",
   data: () => ({
     url: null,
-    sending: false,
   }),
   methods: {
     signOut() {
-      this.sending = true;
       const auth = firebase.auth();
 
       auth
