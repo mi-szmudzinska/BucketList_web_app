@@ -1,7 +1,7 @@
 
 
 export const createStats = (backetList) => {
-    const all = backetList.length;
+    const all = backetList.length !== 0 ? backetList.length : 1;
     const completed = backetList.filter(({statusKey}) =>  statusKey === 'done').length;
     const inProgress = backetList.filter(({statusKey}) =>  statusKey === 'now').length;
     const inPlans = backetList.filter(({statusKey}) =>  statusKey === 'todo').length;

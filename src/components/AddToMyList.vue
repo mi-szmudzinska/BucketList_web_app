@@ -78,7 +78,7 @@
                 />
               </div>
             </div>
-            <md-button clas="addtolist" @click.prevent="addBacket()"
+            <md-button clas="addtolist" @click="addBacket()"
               >Dodaj do swojej listy!</md-button
             >
           </form>
@@ -130,9 +130,6 @@ export default {
       required,
     },
     categoryKey: {
-      required,
-    },
-    status: {
       required,
     },
   },
