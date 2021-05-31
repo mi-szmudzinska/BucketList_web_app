@@ -12,7 +12,10 @@
         <div>
           <line-chart :chart-data="this.stats.chart"></line-chart>
         </div>
-        <div class="rightstats">
+        <div
+          v-if="stats.completed || stats.inProgress || stats.inPlans"
+          class="rightstats"
+        >
           <h4>Gratulacje {{ firstName }}!</h4>
           <span class="sm-list-item-text"
             >Ukończyłe(a)ś {{ stats.completed }} swoich
@@ -35,9 +38,7 @@
     <hr />
     <div class="twocharts">
       <h4>Podział na kategorie</h4>
-      <div
-        categoriesStats.chartclass="container-fluid"
-      >
+      <div class="container-fluid">
         <md-content>
           <div class="rightstats">
             <span
@@ -47,7 +48,17 @@
               >{{ category.name.toUpperCase() }}<br
             /></span>
           </div>
-          <div class="numberstats">
+          <div
+            v-if="
+              categoriesStats.journey ||
+              categoriesStats.food ||
+              categoriesStats.career ||
+              categoriesStats.love ||
+              categoriesStats.other ||
+              categoriesStats.sport
+            "
+            class="numberstats"
+          >
             <span
               >masz {{ categoriesStats.journey }}
               {{ getEndOfWord(categoriesStats.journey) }} <br
@@ -288,9 +299,10 @@ export default {
           photoId,
           friends,
         } = snapshotOfCurrentUser.data();
-        this.detailsStats = createStatsCat2(backetList);
+
         this.stats = createStats(backetList);
         this.categoriesStats = createStatsCat(backetList);
+        this.detailsStats = createStatsCat2(backetList);
         this.firstName = firstName;
         this.photoId = photoId;
         const storage = firebase.storage();
@@ -347,6 +359,11 @@ export default {
 .divfriends {
   position: relative;
   display: flex;
+  background-image: url("../assets/wykres.png");
+  background-repeat: no-repeat;
+  background-position: 45px 45px;
+  background-size: 500px 500px;
+  object-fit: cover;
   align-items: center;
   justify-content: center;
   width: 60%;

@@ -2,7 +2,8 @@ import { getElLengthArrayIfIsCurrentStatus } from "./categoriesChartsPageStats2"
 
 export const compareBackets = (backetList, friendBacketList) => {
     const commonBackets = backetList.filter(userBacket => {
-        return friendBacketList.find(({defaultBacketListElementId}) => defaultBacketListElementId === userBacket.defaultBacketListElementId) ? true : false
+        return friendBacketList.find(({defaultBacketListElementId}) => 
+        defaultBacketListElementId === userBacket.defaultBacketListElementId) ? true : false
     });
 
     const journey = commonBackets.filter(

@@ -3,23 +3,12 @@ export const getElLengthArrayIfIsCurrentStatus = (elementsArray ,status) => {
 }
 
 export const createStatsCat2 = (backetList) => {
-  const journey = backetList.filter(
-    ({ categoryKey }) => categoryKey === "journey"
-  );
-  const food = backetList.filter(({ categoryKey }) => categoryKey === "food")
-    ;
-  const career = backetList.filter(
-    ({ categoryKey }) => categoryKey === "career"
-  );
-  const love = backetList.filter(
-    ({ categoryKey }) => categoryKey === "love"
-  );
-  const other = backetList.filter(
-    ({ categoryKey }) => categoryKey === "other"
-  );
-  const sport = backetList.filter(
-    ({ categoryKey }) => categoryKey === "sport"
-  );
+  const journey = backetList.filter(({ categoryKey }) => categoryKey === "journey");
+  const food = backetList.filter(({ categoryKey }) => categoryKey === "food");
+  const career = backetList.filter(({ categoryKey }) => categoryKey === "career");
+  const love = backetList.filter(({ categoryKey }) => categoryKey === "love");
+  const other = backetList.filter(({ categoryKey }) => categoryKey === "other");
+  const sport = backetList.filter(({ categoryKey }) => categoryKey === "sport");
 
   const doneTasks = getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'done')
   const nowTasks = getElLengthArrayIfIsCurrentStatus([journey, food, career, love, other, sport], 'now')

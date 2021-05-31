@@ -133,6 +133,7 @@ import {
   email,
   minLength,
   maxLength,
+  between,
 } from "vuelidate/lib/validators";
 
 export default {
@@ -164,6 +165,7 @@ export default {
       age: {
         required,
         maxLength: maxLength(3),
+        between: between(5, 140),
       },
       gender: {
         required,

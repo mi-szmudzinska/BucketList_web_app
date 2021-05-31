@@ -17,13 +17,13 @@
 
             <md-field md-clearable>
               <label>Krótki opis, chwytliwe słowa opisujące zadanie</label>
-              <md-input v-model="desc" maxlength="100"></md-input>
+              <md-input v-model="desc" maxlength="50"></md-input>
             </md-field>
 
             <md-field md-clearable>
               <label
-                >To pole jest na opis dla Ciebie byś kiedyś miał
-                cowspominać!</label
+                >To pole jest na opis dla Ciebie, napisz cokolwiek chcesz,
+                jakieś wskazówki lub sposób realizacji!</label
               >
               <md-textarea v-model="longdesc" md-counter="500"></md-textarea>
             </md-field>
@@ -209,10 +209,6 @@ export default {
           ? [...backetList, newBacket]
           : [newBacket];
 
-        console.log({
-          ...rest,
-          backetList: newBacketList,
-        });
         userDoc.set({
           ...rest,
           backetList: newBacketList,
@@ -355,5 +351,10 @@ h6 {
   background-color: #92dcef;
   color: black;
   font-weight: 600;
+}
+h3 {
+  font-family: "Tagger";
+  font-size: 45px;
+  padding-top: 0.2em;
 }
 </style>

@@ -181,6 +181,7 @@ import {
   email,
   minLength,
   maxLength,
+  between,
 } from "vuelidate/lib/validators";
 import "./../styles/popularListPage.css";
 import { v4 } from "uuid";
@@ -220,6 +221,7 @@ export default {
       age: {
         required,
         maxLength: maxLength(3),
+        between: between(5, 140),
       },
       gender: {
         required,
@@ -327,7 +329,6 @@ export default {
       }
     },
     handleFile() {
-      console.log(this.$refs.file.files[0]);
       this.file = this.$refs.file.files[0];
 
       const reader = new FileReader();
@@ -477,6 +478,11 @@ width: 100%;
   align-content: center;
   justify-content: center;
   display: grid;
+}
+.md-title {
+    font-family: "Tagger";
+  font-size: 30px;
+  padding-top: 0.2em;
 }
 </style>
 
